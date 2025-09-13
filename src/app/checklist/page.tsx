@@ -30,6 +30,11 @@ interface ChecklistData {
     manufacturer?: string;
     model?: string;
     serialNumber?: string;
+    satisfactoryMeterCylinder: 'PASS' | 'FAIL' | 'NA';
+    inspectionVisiblePipework: 'PASS' | 'FAIL' | 'NA';
+    ecvAccessOperation: 'PASS' | 'FAIL' | 'NA';
+    protectiveEquipotentialBonding: 'PASS' | 'FAIL' | 'NA';
+    tightnessTest: 'PASS' | 'FAIL' | 'NA';
   };
   applianceDetails: {
     applianceType: string;
@@ -322,12 +327,54 @@ function ChecklistContent() {
           }
         }
 
+        .safety-checks-grid {
+          margin-top: 4px;
+        }
+
+        .safety-check-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1px 0;
+          border-bottom: 1px solid #eee;
+          font-size: 6px;
+        }
+
+        .check-label {
+          font-weight: bold;
+          flex: 1;
+        }
+
+        .check-result {
+          font-weight: bold;
+          padding: 1px 4px;
+          border-radius: 2px;
+          min-width: 30px;
+          text-align: center;
+          font-size: 5px;
+        }
+
+        .check-result.pass {
+          background: #d4edda;
+          color: #155724;
+        }
+
+        .check-result.fail {
+          background: #f8d7da;
+          color: #721c24;
+        }
+
+        .check-result.na {
+          background: #fff3cd;
+          color: #856404;
+        }
+
         @media screen {
           body {
             background: #f5f5f5;
             padding: 10px;
           }
-          
+
           .checklist-container {
             background: white;
             padding: 10px;
@@ -453,6 +500,42 @@ function ChecklistContent() {
               <div className="field-group">
                 <label>Serial Number:</label><br />
                 {checklistData.installationDetails.serialNumber || 'N/A'}
+              </div>
+            </div>
+
+            <div style={{ marginTop: '8px' }}>
+              <h4 style={{ fontSize: '8px', fontWeight: 'bold', margin: '4px 0', color: '#2e5aa6' }}>INSTALLATION SAFETY CHECKS</h4>
+              <div className="safety-checks-grid">
+                <div className="safety-check-row">
+                  <span className="check-label">Satisfactory Meter/Cylinder:</span>
+                  <span className={`check-result ${checklistData.installationDetails.satisfactoryMeterCylinder?.toLowerCase()}`}>
+                    {checklistData.installationDetails.satisfactoryMeterCylinder || 'N/A'}
+                  </span>
+                </div>
+                <div className="safety-check-row">
+                  <span className="check-label">Inspection of Visible Pipework:</span>
+                  <span className={`check-result ${checklistData.installationDetails.inspectionVisiblePipework?.toLowerCase()}`}>
+                    {checklistData.installationDetails.inspectionVisiblePipework || 'N/A'}
+                  </span>
+                </div>
+                <div className="safety-check-row">
+                  <span className="check-label">ECV Access and Operation:</span>
+                  <span className={`check-result ${checklistData.installationDetails.ecvAccessOperation?.toLowerCase()}`}>
+                    {checklistData.installationDetails.ecvAccessOperation || 'N/A'}
+                  </span>
+                </div>
+                <div className="safety-check-row">
+                  <span className="check-label">Protective Equipotential Bonding:</span>
+                  <span className={`check-result ${checklistData.installationDetails.protectiveEquipotentialBonding?.toLowerCase()}`}>
+                    {checklistData.installationDetails.protectiveEquipotentialBonding || 'N/A'}
+                  </span>
+                </div>
+                <div className="safety-check-row">
+                  <span className="check-label">Tightness Test:</span>
+                  <span className={`check-result ${checklistData.installationDetails.tightnessTest?.toLowerCase()}`}>
+                    {checklistData.installationDetails.tightnessTest || 'N/A'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

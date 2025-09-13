@@ -159,7 +159,13 @@ const checklistSchema = z.object({
     installationDate: z.string().optional(),
     manufacturer: z.string().optional(),
     model: z.string().optional(),
-    serialNumber: z.string().optional()
+    serialNumber: z.string().optional(),
+    // Installation Safety Checks
+    satisfactoryMeterCylinder: z.enum(['PASS', 'FAIL', 'NA']),
+    inspectionVisiblePipework: z.enum(['PASS', 'FAIL', 'NA']),
+    ecvAccessOperation: z.enum(['PASS', 'FAIL', 'NA']),
+    protectiveEquipotentialBonding: z.enum(['PASS', 'FAIL', 'NA']),
+    tightnessTest: z.enum(['PASS', 'FAIL', 'NA'])
   }),
 
   // 5. Appliance Details
@@ -347,7 +353,12 @@ export default function DemoStyleForm() {
         installationDate: '',
         manufacturer: '',
         model: '',
-        serialNumber: ''
+        serialNumber: '',
+        satisfactoryMeterCylinder: 'NA',
+        inspectionVisiblePipework: 'NA',
+        ecvAccessOperation: 'NA',
+        protectiveEquipotentialBonding: 'NA',
+        tightnessTest: 'NA'
       },
       applianceDetails: {
         applianceType: '',
@@ -1387,6 +1398,15 @@ export default function DemoStyleForm() {
           background: white;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
           box-sizing: border-box;
+          color: #2c3e50;
+          font-weight: 500;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+          color: #6c757d;
+          opacity: 1;
+          font-weight: 400;
         }
 
         .form-group input:focus,
@@ -1437,7 +1457,8 @@ export default function DemoStyleForm() {
           gap: 6px;
           cursor: pointer;
           font-size: 13px;
-          font-weight: 500;
+          font-weight: 600;
+          color: #2c3e50;
           padding: 6px 10px;
           border-radius: 6px;
           transition: all 0.2s ease;
@@ -2753,6 +2774,43 @@ export default function DemoStyleForm() {
                         placeholder="Enter serial number"
                       />
                     </div>
+                  </div>
+
+                  <h4 style={{ marginTop: '25px', marginBottom: '15px', color: '#2e5aa6', fontSize: '16px' }}>Installation Safety Checks</h4>
+
+                  <div className="safety-check-item">
+                    <strong>Satisfactory Meter/Cylinder</strong>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.satisfactoryMeterCylinder')} value="PASS" /> Pass</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.satisfactoryMeterCylinder')} value="FAIL" /> Fail</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.satisfactoryMeterCylinder')} value="NA" /> N/A</label>
+                  </div>
+
+                  <div className="safety-check-item">
+                    <strong>Inspection of Visible Pipework</strong>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.inspectionVisiblePipework')} value="PASS" /> Pass</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.inspectionVisiblePipework')} value="FAIL" /> Fail</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.inspectionVisiblePipework')} value="NA" /> N/A</label>
+                  </div>
+
+                  <div className="safety-check-item">
+                    <strong>ECV Access and Operation</strong>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.ecvAccessOperation')} value="PASS" /> Pass</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.ecvAccessOperation')} value="FAIL" /> Fail</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.ecvAccessOperation')} value="NA" /> N/A</label>
+                  </div>
+
+                  <div className="safety-check-item">
+                    <strong>Protective Equipotential Bonding</strong>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.protectiveEquipotentialBonding')} value="PASS" /> Pass</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.protectiveEquipotentialBonding')} value="FAIL" /> Fail</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.protectiveEquipotentialBonding')} value="NA" /> N/A</label>
+                  </div>
+
+                  <div className="safety-check-item">
+                    <strong>Tightness Test</strong>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.tightnessTest')} value="PASS" /> Pass</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.tightnessTest')} value="FAIL" /> Fail</label>
+                    <label><input type="radio" {...checklistForm.register('installationDetails.tightnessTest')} value="NA" /> N/A</label>
                   </div>
                 </div>
 
