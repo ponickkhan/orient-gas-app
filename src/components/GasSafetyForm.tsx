@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Download, Plus, Trash2, Loader2 } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 import { generatePDF } from '@/utils/pdfGenerator';
 
 // Form validation schema

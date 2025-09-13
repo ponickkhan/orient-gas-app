@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Download, Plus, Loader2, RotateCcw, Printer, Receipt, CheckSquare } from 'lucide-react';
+import { Loader2, RotateCcw, Printer, Receipt, CheckSquare } from 'lucide-react';
+import Image from 'next/image';
 
 // Form validation schema matching demo.html structure
 const gasSafetySchema = z.object({
@@ -226,7 +227,7 @@ export default function DemoStyleForm() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showChecklistModal, setShowChecklistModal] = useState(false);
   
-  const { register, handleSubmit, control, formState: { errors }, reset } = useForm<GasSafetyData>({
+  const { register, handleSubmit, control, reset } = useForm<GasSafetyData>({
     resolver: zodResolver(gasSafetySchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
@@ -290,7 +291,7 @@ export default function DemoStyleForm() {
     }
   });
 
-  const { fields: applianceFields, append: appendAppliance, remove: removeAppliance } = useFieldArray({
+  const { fields: applianceFields, append: appendAppliance } = useFieldArray({
     control,
     name: 'appliances'
   });
@@ -420,11 +421,11 @@ export default function DemoStyleForm() {
     });
   };
 
-  const onSubmit = async (data: GasSafetyData) => {
+  const onSubmit = async () => {
     setIsGenerating(true);
     try {
       // Generate PDF with demo.html styling
-      await generateDemoPDF(data);
+      await generateDemoPDF();
     } catch (error) {
       console.error('Error generating PDF:', error);
     } finally {
@@ -432,7 +433,7 @@ export default function DemoStyleForm() {
     }
   };
 
-  const generateDemoPDF = async (data: GasSafetyData) => {
+  const generateDemoPDF = async () => {
     try {
       // Simply trigger the browser's print dialog which will use the existing print styles
       window.print();
@@ -617,7 +618,7 @@ export default function DemoStyleForm() {
 
 
 
-  const onChecklistSubmit = async (data: any) => {
+  const onChecklistSubmit = async (data: ChecklistData) => {
     setIsGenerating(true);
     try {
       const checklistData = data as ChecklistData;
@@ -1633,7 +1634,7 @@ export default function DemoStyleForm() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="titleband">
               <div className="title-content">
-                <img
+                <Image
                   src="/logo.png"
                   alt="Company Logo"
                   width={80}
@@ -2222,7 +2223,7 @@ export default function DemoStyleForm() {
                       <th>Signature:</th>
                       <td colSpan={4}>
                         <div className="sigbox">
-                          <img
+                          <Image
                             src="/signature.png"
                             alt="Engineer Signature"
                             width={120}

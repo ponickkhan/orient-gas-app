@@ -2,6 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface ChecklistData {
   business: {
@@ -340,7 +341,7 @@ export default function ChecklistPage() {
       <div className="checklist-container">
         <div className="checklist-header">
           <div className="company-info">
-            <img src="/logo.png" alt="Company Logo" className="company-logo" />
+            <Image src="/logo.png" alt="Company Logo" width={40} height={30} className="company-logo" />
             <p className="company-owner">AKM ZAHURUL ISLAM</p>
           </div>
           <div className="checklist-title">
@@ -592,7 +593,7 @@ export default function ChecklistPage() {
           <h3>9. SIGNATURES</h3>
           <div className="signature-section">
             <div className="signature-box">
-              <img src="/signature.png" alt="Engineer Signature" className="signature-image" />
+              <Image src="/signature.png" alt="Engineer Signature" width={60} height={15} className="signature-image" />
               <p><strong>{checklistData.business.engineerName}</strong></p>
               <p>Gas Safe Engineer</p>
               <p>Reg No: {checklistData.business.gasSafeEngineerNo}</p>
