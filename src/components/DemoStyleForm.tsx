@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Download, Plus, Loader2, RotateCcw, Printer, Receipt } from 'lucide-react';
+import { Download, Plus, Loader2, RotateCcw, Printer, Receipt, CheckSquare } from 'lucide-react';
 
 // Form validation schema matching demo.html structure
 const gasSafetySchema = z.object({
@@ -124,9 +124,107 @@ const invoiceSchema = z.object({
 
 type InvoiceData = z.infer<typeof invoiceSchema>;
 
+// Service and Maintenance Checklist schema
+const checklistSchema = z.object({
+  // 1. Business Section
+  business: z.object({
+    companyAddress: z.string().min(1, 'Company address is required'),
+    postcode: z.string().min(1, 'Postcode is required'),
+    telephone: z.string().min(1, 'Telephone is required'),
+    mobile: z.string().optional(),
+    gasSafeEngineerNo: z.string().min(1, 'Gas Safe engineer number is required'),
+    engineerName: z.string().min(1, 'Engineer name is required'),
+    licenseNo: z.string().min(1, 'License number is required')
+  }),
+
+  // 2. Site Details
+  siteDetails: z.object({
+    siteAddress: z.string().min(1, 'Site address is required'),
+    postcode: z.string().min(1, 'Site postcode is required'),
+    accessInstructions: z.string().optional()
+  }),
+
+  // 3. Client Details
+  clientDetails: z.object({
+    clientName: z.string().min(1, 'Client name is required'),
+    contactNumber: z.string().min(1, 'Contact number is required'),
+    email: z.string().optional()
+  }),
+
+  // 4. Installation Details
+  installationDetails: z.object({
+    installationType: z.string().min(1, 'Installation type is required'),
+    installationDate: z.string().optional(),
+    manufacturer: z.string().optional(),
+    model: z.string().optional(),
+    serialNumber: z.string().optional()
+  }),
+
+  // 5. Appliance Details
+  applianceDetails: z.object({
+    applianceType: z.string().min(1, 'Appliance type is required'),
+    location: z.string().min(1, 'Location is required'),
+    manufacturer: z.string().optional(),
+    model: z.string().optional(),
+    serialNumber: z.string().optional(),
+    gasType: z.string().optional(),
+    inputRating: z.string().optional()
+  }),
+
+  // 6. Safety Checks (Pass/Fail/N/A)
+  safetyChecks: z.object({
+    gasConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
+    electricalConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
+    waterConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
+    overallConditionStability: z.enum(['PASS', 'FAIL', 'NA']),
+    controlsOperation: z.enum(['PASS', 'FAIL', 'NA']),
+    visualInspectionHeatExchanger: z.enum(['PASS', 'FAIL', 'NA']),
+    burnerAndInjectors: z.enum(['PASS', 'FAIL', 'NA']),
+    fans: z.enum(['PASS', 'FAIL', 'NA']),
+    ignition: z.enum(['PASS', 'FAIL', 'NA']),
+    flamePicture: z.enum(['PASS', 'FAIL', 'NA']),
+    correctSafetyDevicesOperation: z.enum(['PASS', 'FAIL', 'NA']),
+    heatInputOperatingPressure: z.enum(['PASS', 'FAIL', 'NA']),
+    sealsIncludingApplianceCasing: z.enum(['PASS', 'FAIL', 'NA']),
+    condensateTrapDisposal: z.enum(['PASS', 'FAIL', 'NA']),
+    pressureTemperatureReliefValve: z.enum(['PASS', 'FAIL', 'NA']),
+    returnAirPlenum: z.enum(['PASS', 'FAIL', 'NA']),
+    fireplaceCatchmentSpaceClosurePlate: z.enum(['PASS', 'FAIL', 'NA']),
+    flueFlowSpillageTest: z.enum(['PASS', 'FAIL', 'NA']),
+    satisfactoryChimneyFlue: z.enum(['PASS', 'FAIL', 'NA']),
+    satisfactoryVentilation: z.enum(['PASS', 'FAIL', 'NA']),
+    finalCombustionAnalyserReading: z.enum(['PASS', 'FAIL', 'NA'])
+  }),
+
+  // 7. Summary and Notes
+  summaryNotes: z.object({
+    workCarriedOut: z.string().optional(),
+    defectsFound: z.string().optional(),
+    recommendedActions: z.string().optional(),
+    additionalNotes: z.string().optional()
+  }),
+
+  // 8. Date Section
+  dateSection: z.object({
+    checksCompletedDate: z.string().min(1, 'Checks completed date is required'),
+    nextServiceMaintenanceDate: z.string().optional()
+  }),
+
+  // 9. Signatures
+  signatures: z.object({
+    engineerSignature: z.boolean().default(true),
+    engineerSerial: z.string().min(1, 'Engineer serial is required'),
+    clientSignature: z.boolean().default(false),
+    clientName: z.string().optional()
+  })
+});
+
+type ChecklistData = z.infer<typeof checklistSchema>;
+
 export default function DemoStyleForm() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
   
   const { register, handleSubmit, control, formState: { errors }, reset } = useForm<GasSafetyData>({
     resolver: zodResolver(gasSafetySchema),
@@ -217,6 +315,87 @@ export default function DemoStyleForm() {
   const { fields: invoiceItems, append: appendInvoiceItem, remove: removeInvoiceItem } = useFieldArray({
     control: invoiceForm.control,
     name: 'items'
+  });
+
+  // Checklist form setup
+  const checklistForm = useForm<ChecklistData>({
+    resolver: zodResolver(checklistSchema),
+    defaultValues: {
+      business: {
+        companyAddress: '',
+        postcode: '',
+        telephone: '',
+        mobile: '',
+        gasSafeEngineerNo: '',
+        engineerName: '',
+        licenseNo: ''
+      },
+      siteDetails: {
+        siteAddress: '',
+        postcode: '',
+        accessInstructions: ''
+      },
+      clientDetails: {
+        clientName: '',
+        contactNumber: '',
+        email: ''
+      },
+      installationDetails: {
+        installationType: '',
+        installationDate: '',
+        manufacturer: '',
+        model: '',
+        serialNumber: ''
+      },
+      applianceDetails: {
+        applianceType: '',
+        location: '',
+        manufacturer: '',
+        model: '',
+        serialNumber: '',
+        gasType: '',
+        inputRating: ''
+      },
+      safetyChecks: {
+        gasConnectionIsolation: 'NA',
+        electricalConnectionIsolation: 'NA',
+        waterConnectionIsolation: 'NA',
+        overallConditionStability: 'NA',
+        controlsOperation: 'NA',
+        visualInspectionHeatExchanger: 'NA',
+        burnerAndInjectors: 'NA',
+        fans: 'NA',
+        ignition: 'NA',
+        flamePicture: 'NA',
+        correctSafetyDevicesOperation: 'NA',
+        heatInputOperatingPressure: 'NA',
+        sealsIncludingApplianceCasing: 'NA',
+        condensateTrapDisposal: 'NA',
+        pressureTemperatureReliefValve: 'NA',
+        returnAirPlenum: 'NA',
+        fireplaceCatchmentSpaceClosurePlate: 'NA',
+        flueFlowSpillageTest: 'NA',
+        satisfactoryChimneyFlue: 'NA',
+        satisfactoryVentilation: 'NA',
+        finalCombustionAnalyserReading: 'NA'
+      },
+      summaryNotes: {
+        workCarriedOut: '',
+        defectsFound: '',
+        recommendedActions: '',
+        additionalNotes: ''
+      },
+      dateSection: {
+        checksCompletedDate: new Date().toISOString().split('T')[0],
+        nextServiceMaintenanceDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      },
+      signatures: {
+        engineerSignature: true,
+        engineerSerial: '',
+        clientSignature: false,
+        clientName: ''
+      }
+    }
   });
 
   const addAppliance = () => {
@@ -429,6 +608,54 @@ export default function DemoStyleForm() {
     invoiceForm.setValue('subtotal', subtotal);
     invoiceForm.setValue('vatAmount', vatAmount);
     invoiceForm.setValue('total', total);
+  };
+
+
+
+
+
+
+
+
+  const onChecklistSubmit = async (data: any) => {
+    setIsGenerating(true);
+    try {
+      const checklistData = data as ChecklistData;
+
+      // Create the checklist URL
+      const checklistData64 = btoa(JSON.stringify(checklistData));
+      const checklistUrl = `/checklist?data=${encodeURIComponent(checklistData64)}`;
+
+      // Try to open in new tab
+      const newWindow = window.open(checklistUrl, '_blank', 'noopener,noreferrer');
+
+      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+        // Popup was blocked, show a manual link
+        const userConfirm = confirm(
+          'Popup was blocked by your browser. Would you like to open the checklist in the same tab instead?'
+        );
+
+        if (userConfirm) {
+          // Navigate in the same window
+          window.location.href = checklistUrl;
+        } else {
+          // Show instructions to manually allow popups
+          alert(
+            'To open the checklist in a new tab:\n\n' +
+            '1. Allow popups for this site in your browser\n' +
+            '2. Or copy this URL and open it manually:\n' +
+            window.location.origin + checklistUrl
+          );
+        }
+      }
+
+      setShowChecklistModal(false);
+    } catch (error) {
+      console.error('Error generating checklist:', error);
+      alert('Error generating checklist. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleReset = () => {
@@ -1035,6 +1262,310 @@ export default function DemoStyleForm() {
           cursor: pointer;
         }
 
+        /* Enhanced Checklist Modal Styles */
+        .checklist-section {
+          margin: 25px 0;
+          padding: 25px;
+          border: 2px solid #e1e8f0;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+          box-shadow: 0 4px 15px rgba(46, 90, 166, 0.08);
+          transition: all 0.3s ease;
+        }
+
+        .checklist-section:hover {
+          border-color: #2e5aa6;
+          box-shadow: 0 6px 20px rgba(46, 90, 166, 0.12);
+          transform: translateY(-2px);
+        }
+
+        .checklist-section h3 {
+          margin: 0 0 20px 0;
+          color: white;
+          font-size: 18px;
+          font-weight: 700;
+          padding: 12px 16px;
+          background: linear-gradient(135deg, #2e5aa6 0%, #1e4080 100%);
+          border-radius: 8px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 3px 10px rgba(46, 90, 166, 0.3);
+        }
+
+        .checkbox-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 12px;
+          margin: 15px 0;
+        }
+
+        .checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 4px;
+          transition: background-color 0.2s;
+        }
+
+        .checkbox-item:hover {
+          background: rgba(46, 90, 166, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          accent-color: #2e5aa6;
+        }
+
+        .appliance-checklist {
+          margin: 15px 0;
+          padding: 15px;
+          border: 1px solid #d1d9e6;
+          border-radius: 6px;
+          background: #ffffff;
+        }
+
+        .appliance-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+        }
+
+        .appliance-header h4 {
+          margin: 0;
+          color: #2e5aa6;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .remove-btn {
+          background: #dc3545;
+          color: white;
+          border: none;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+
+        .remove-btn:hover {
+          background: #c82333;
+        }
+
+        .add-appliance-btn {
+          background: #28a745;
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 6px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          margin-top: 15px;
+        }
+
+        .add-appliance-btn:hover {
+          background: #218838;
+        }
+
+        /* Enhanced Form Input Styling */
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e1e8f0;
+          border-radius: 8px;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          background: white;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+          box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+          outline: none;
+          border-color: #2e5aa6;
+          box-shadow: 0 0 0 3px rgba(46, 90, 166, 0.1);
+          transform: translateY(-1px);
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          color: #2e5aa6;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        /* Safety Checks Enhanced Styling */
+        .safety-check-item {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 12px;
+          align-items: center;
+          padding: 12px 16px;
+          margin-bottom: 8px;
+          background: white;
+          border: 2px solid #f1f5f9;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+        }
+
+        .safety-check-item:hover {
+          border-color: #2e5aa6;
+          box-shadow: 0 3px 10px rgba(46, 90, 166, 0.1);
+        }
+
+        .safety-check-item strong {
+          color: #1e293b;
+          font-weight: 600;
+          font-size: 13px;
+        }
+
+        .safety-check-item label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 500;
+          padding: 6px 10px;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+        }
+
+        .safety-check-item label:hover {
+          background: #f1f5f9;
+        }
+
+        .safety-check-item input[type="radio"] {
+          width: 16px;
+          height: 16px;
+          margin: 0;
+          accent-color: #2e5aa6;
+        }
+
+        /* Submit Button Styling */
+        .checklist-submit-container {
+          margin-top: 40px;
+          padding: 30px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e1e8f0 100%);
+          border-radius: 12px;
+          border: 2px solid #2e5aa6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+        }
+
+        .checklist-submit-btn {
+          background: linear-gradient(135deg, #2e5aa6 0%, #1e4080 100%);
+          color: white;
+          border: none;
+          padding: 14px 32px;
+          font-size: 16px;
+          font-weight: 700;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 6px 20px rgba(46, 90, 166, 0.3);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          min-width: 180px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        .checklist-submit-btn:hover {
+          background: linear-gradient(135deg, #1e4080 0%, #2e5aa6 100%);
+          transform: translateY(-3px);
+          box-shadow: 0 10px 30px rgba(46, 90, 166, 0.4);
+        }
+
+        .checklist-submit-btn:active {
+          transform: translateY(-1px);
+        }
+
+        .checklist-submit-btn:disabled {
+          background: #94a3b8;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+
+        /* Enhanced Modal Footer */
+        .btn-secondary:hover {
+          background: #6c757d !important;
+          color: white !important;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        /* Loading Animation */
+        .animate-spin {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        /* Modal Backdrop Enhancement */
+        .modal-overlay {
+          backdrop-filter: blur(8px) !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .modal-content {
+            width: 95%;
+            max-height: 95vh;
+          }
+
+          .modal-header {
+            padding: 20px 25px;
+          }
+
+          .modal-body {
+            padding: 25px;
+          }
+
+          .checklist-section {
+            padding: 20px;
+            margin: 20px 0;
+          }
+
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .safety-check-item {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            text-align: left;
+          }
+
+          .safety-check-item label {
+            justify-content: flex-start;
+          }
+
+          .checklist-submit-btn {
+            min-width: 200px;
+            font-size: 16px;
+            padding: 14px 30px;
+          }
+        }
+
         @media print {
           .toolbar {
             display: none;
@@ -1059,6 +1590,24 @@ export default function DemoStyleForm() {
           <button className="btn primary" type="button" onClick={handlePrint}>
             <Printer size={16} />
             Print / Save PDF
+          </button>
+          <button
+            className="btn primary"
+            type="button"
+            onClick={() => setShowChecklistModal(true)}
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <CheckSquare size={16} />
+                Generate Checklist
+              </>
+            )}
           </button>
           <button
             className="btn primary"
@@ -2009,6 +2558,545 @@ export default function DemoStyleForm() {
                     <>
                       <Receipt size={16} />
                       Generate Invoice
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Checklist Modal */}
+      {showChecklistModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Generate Gas Safety Checklist</h2>
+              <button
+                className="modal-close"
+                onClick={() => setShowChecklistModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={checklistForm.handleSubmit(onChecklistSubmit)}>
+              <div className="modal-body">
+
+                {/* 1. Business Section */}
+                <div className="checklist-section">
+                  <h3>1. Business Details</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Company Address *</label>
+                      <textarea
+                        {...checklistForm.register('business.companyAddress')}
+                        rows={2}
+                        placeholder="Enter company address"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Postcode *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('business.postcode')}
+                        placeholder="Enter postcode"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Telephone *</label>
+                      <input
+                        type="tel"
+                        {...checklistForm.register('business.telephone')}
+                        placeholder="Enter telephone number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Mobile</label>
+                      <input
+                        type="tel"
+                        {...checklistForm.register('business.mobile')}
+                        placeholder="Enter mobile number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Gas Safe Engineer No *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('business.gasSafeEngineerNo')}
+                        placeholder="Enter Gas Safe engineer number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Engineer Name *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('business.engineerName')}
+                        placeholder="Enter engineer name"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>License No *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('business.licenseNo')}
+                        placeholder="Enter license number"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Site Details */}
+                <div className="checklist-section">
+                  <h3>2. Site Details</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Site Address *</label>
+                      <textarea
+                        {...checklistForm.register('siteDetails.siteAddress')}
+                        rows={2}
+                        placeholder="Enter site address"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Postcode *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('siteDetails.postcode')}
+                        placeholder="Enter site postcode"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Access Instructions</label>
+                      <textarea
+                        {...checklistForm.register('siteDetails.accessInstructions')}
+                        rows={2}
+                        placeholder="Enter access instructions"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Client Details */}
+                <div className="checklist-section">
+                  <h3>3. Client Details</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Client Name *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('clientDetails.clientName')}
+                        placeholder="Enter client name"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Contact Number *</label>
+                      <input
+                        type="tel"
+                        {...checklistForm.register('clientDetails.contactNumber')}
+                        placeholder="Enter contact number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        {...checklistForm.register('clientDetails.email')}
+                        placeholder="Enter email address"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Installation Details */}
+                <div className="checklist-section">
+                  <h3>4. Installation Details</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Installation Type *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('installationDetails.installationType')}
+                        placeholder="e.g., Boiler Installation, Service"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Installation Date</label>
+                      <input
+                        type="date"
+                        {...checklistForm.register('installationDetails.installationDate')}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Manufacturer</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('installationDetails.manufacturer')}
+                        placeholder="Enter manufacturer"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Model</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('installationDetails.model')}
+                        placeholder="Enter model"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Serial Number</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('installationDetails.serialNumber')}
+                        placeholder="Enter serial number"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Appliance Details */}
+                <div className="checklist-section">
+                  <h3>5. Appliance Details</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Appliance Type *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.applianceType')}
+                        placeholder="e.g., Boiler, Cooker, Fire"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Location *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.location')}
+                        placeholder="e.g., Kitchen, Living Room"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Manufacturer</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.manufacturer')}
+                        placeholder="Enter manufacturer"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Model</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.model')}
+                        placeholder="Enter model"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Serial Number</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.serialNumber')}
+                        placeholder="Enter serial number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Gas Type</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.gasType')}
+                        placeholder="e.g., Natural Gas, LPG"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Input Rating</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('applianceDetails.inputRating')}
+                        placeholder="e.g., 24kW"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 6. Safety Checks */}
+                <div className="checklist-section">
+                  <h3>6. Safety Checks (Pass/Fail/N/A)</h3>
+                  <div style={{ display: 'grid', gap: '8px' }}>
+
+                    <div className="safety-check-item">
+                      <strong>APPLIANCE Gas Connection and Isolation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Electrical Connection & Isolation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.electricalConnectionIsolation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.electricalConnectionIsolation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.electricalConnectionIsolation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Water Connection & Isolation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.waterConnectionIsolation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.waterConnectionIsolation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.waterConnectionIsolation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Overall Condition, Stability and Controls Operation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Controls Operation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.controlsOperation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.controlsOperation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.controlsOperation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Visual Inspection of Heat Exchanger</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.visualInspectionHeatExchanger')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.visualInspectionHeatExchanger')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.visualInspectionHeatExchanger')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Burner and Injectors</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Fans</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fans')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fans')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fans')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Ignition</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Flame Picture</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flamePicture')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flamePicture')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flamePicture')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Correct Safety Device(s) Operation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Heat Input/Operating Pressure</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Seals including Appliance Casing</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.sealsIncludingApplianceCasing')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.sealsIncludingApplianceCasing')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.sealsIncludingApplianceCasing')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Condensate Trap/Disposal</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.condensateTrapDisposal')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.condensateTrapDisposal')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.condensateTrapDisposal')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Pressure/Temperature Relief Valve</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.pressureTemperatureReliefValve')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.pressureTemperatureReliefValve')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.pressureTemperatureReliefValve')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Return Air/Plenum</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.returnAirPlenum')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.returnAirPlenum')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.returnAirPlenum')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Fireplace Catchment Space and Closure Plate</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fireplaceCatchmentSpaceClosurePlate')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fireplaceCatchmentSpaceClosurePlate')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.fireplaceCatchmentSpaceClosurePlate')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Flue Flow & Spillage Test</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flueFlowSpillageTest')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flueFlowSpillageTest')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.flueFlowSpillageTest')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Satisfactory Chimney/Flue</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Satisfactory Ventilation</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="NA" /> N/A</label>
+                    </div>
+
+                    <div className="safety-check-item">
+                      <strong>Final Combustion Analyser Reading</strong>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="PASS" /> Pass</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="FAIL" /> Fail</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="NA" /> N/A</label>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* 7. Summary and Notes */}
+                <div className="checklist-section">
+                  <h3>7. Summary and Notes</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Work Carried Out</label>
+                      <textarea
+                        {...checklistForm.register('summaryNotes.workCarriedOut')}
+                        rows={3}
+                        placeholder="Describe work carried out"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Defects Found</label>
+                      <textarea
+                        {...checklistForm.register('summaryNotes.defectsFound')}
+                        rows={3}
+                        placeholder="List any defects found"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Recommended Actions</label>
+                      <textarea
+                        {...checklistForm.register('summaryNotes.recommendedActions')}
+                        rows={3}
+                        placeholder="Recommended actions"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Additional Notes</label>
+                      <textarea
+                        {...checklistForm.register('summaryNotes.additionalNotes')}
+                        rows={3}
+                        placeholder="Any additional notes"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 8. Date Section */}
+                <div className="checklist-section">
+                  <h3>8. Date Section</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Checks Completed Date *</label>
+                      <input
+                        type="date"
+                        {...checklistForm.register('dateSection.checksCompletedDate')}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Next Service/Maintenance Date</label>
+                      <input
+                        type="date"
+                        {...checklistForm.register('dateSection.nextServiceMaintenanceDate')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 9. Signatures */}
+                <div className="checklist-section">
+                  <h3>9. Signatures</h3>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Engineer Serial *</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('signatures.engineerSerial')}
+                        placeholder="Enter engineer serial number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Client Name</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('signatures.clientName')}
+                        placeholder="Enter client name for signature"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+              </div>
+
+              <div className="checklist-submit-container">
+                <button
+                  type="button"
+                  onClick={() => setShowChecklistModal(false)}
+                  className="btn-secondary"
+                  style={{
+                    padding: '14px 32px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    borderRadius: '10px',
+                    border: '2px solid #6c757d',
+                    background: 'white',
+                    color: '#6c757d',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    minWidth: '120px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="checklist-submit-btn"
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <CheckSquare size={16} />
+                      Generate
                     </>
                   )}
                 </button>
