@@ -126,6 +126,7 @@ const invoiceSchema = z.object({
 type InvoiceData = z.infer<typeof invoiceSchema>;
 
 // Service and Maintenance Checklist schema
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checklistSchema = z.object({
   // 1. Business Section
   business: z.object({
@@ -618,7 +619,7 @@ export default function DemoStyleForm() {
 
 
 
-  const onChecklistSubmit = async (data: any) => {
+  const onChecklistSubmit = async (data: Record<string, unknown>) => {
     setIsGenerating(true);
     try {
       const checklistData = data as ChecklistData;
