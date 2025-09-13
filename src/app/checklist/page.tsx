@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 
 interface ChecklistData {
@@ -81,7 +81,7 @@ interface ChecklistData {
   };
 }
 
-export default function ChecklistPage() {
+function ChecklistContent() {
   const searchParams = useSearchParams();
   const [checklistData, setChecklistData] = useState<ChecklistData | null>(null);
 
@@ -610,5 +610,13 @@ export default function ChecklistPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ChecklistPage() {
+  return (
+    <Suspense fallback={<div>Loading checklist...</div>}>
+      <ChecklistContent />
+    </Suspense>
   );
 }
