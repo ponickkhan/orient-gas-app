@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Custom Gas Safety Theme Colors */
+  --primary: 30 52 108; /* #24476c */
+  --primary-foreground: 240 246 251;
+  
+  --secondary: 74 73 135; /* #4a4987 */
+  --secondary-foreground: 240 246 251;
+  
+  --accent: 137 166 193; /* #89a6c1 */
+  --accent-foreground: 30 52 108;
+  
+  --warning: 230 145 60; /* #e6913c */
+  --warning-foreground: 255 255 255;
+  
+  --success: 210 175 108; /* #d2af6c */
+  --success-foreground: 30 52 108;
+  
+  --muted: 245 212 156; /* #f5d49c */
+  --muted-foreground: 74 73 135;
+  
+  --background: 255 255 255;
+  --foreground: 30 52 108;
+  
+  --card: 255 255 255;
+  --card-foreground: 30 52 108;
+  
+  --popover: 255 255 255;
+  --popover-foreground: 30 52 108;
+  
+  --border: 210 175 108;
+  --input: 245 212 156;
+  
+  --ring: 30 52 108;
+  
+  --radius: 0.5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }

@@ -472,34 +472,34 @@ export default function DemoStyleForm() {
         <head>
           <title>Invoice ${invoiceData.invoiceNumber}</title>
           <style>
-            @page { size: A4; margin: 10mm; }
-            body { font-family: Arial, sans-serif; margin: 0; padding: 12px; color: #333; font-size: 12px; }
-            .invoice-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; border-bottom: 2px solid #2e5aa6; padding-bottom: 10px; }
+            @page { size: A4; margin: 8mm; }
+            body { font-family: Arial, sans-serif; margin: 0; padding: 8px; color: #333; font-size: 10px; line-height: 1.2; }
+            .invoice-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
             .company-info { flex: 1; }
-            .company-logo { width: 60px; height: 45px; object-fit: contain; margin-bottom: 5px; }
-            .company-owner { font-size: 11px; color: #666; margin: 2px 0; }
+            .company-logo { width: 40px; height: 30px; object-fit: contain; margin-bottom: 3px; }
+            .company-owner { font-size: 9px; color: #666; margin: 1px 0; }
             .invoice-title { text-align: right; }
-            .invoice-title h1 { font-size: 28px; color: #2e5aa6; margin: 0; }
-            .invoice-number { font-size: 14px; color: #666; margin: 2px 0; }
-            .invoice-details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+            .invoice-title h1 { font-size: 20px; color: #2d3748; margin: 0; }
+            .invoice-number { font-size: 11px; color: #666; margin: 1px 0; }
+            .invoice-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
             .bill-to, .invoice-info { }
-            .bill-to h3, .invoice-info h3 { color: #2e5aa6; border-bottom: 1px solid #2e5aa6; padding-bottom: 3px; margin-bottom: 8px; font-size: 13px; }
-            .bill-to p, .invoice-info p { margin: 3px 0; font-size: 11px; line-height: 1.3; }
-            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-            .items-table th { background: #2e5aa6; color: white; padding: 6px 8px; text-align: left; font-size: 11px; }
-            .items-table td { padding: 5px 8px; border-bottom: 1px solid #ddd; }
+            .bill-to h3, .invoice-info h3 { color: #2d3748; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; margin-bottom: 4px; font-size: 11px; }
+            .bill-to p, .invoice-info p { margin: 2px 0; font-size: 9px; line-height: 1.2; }
+            .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 9px; }
+            .items-table th { background: #f8fafc; color: #2d3748; padding: 3px 5px; text-align: left; font-size: 9px; border: 1px solid #e2e8f0; }
+            .items-table td { padding: 3px 5px; border: 1px solid #e2e8f0; font-size: 9px; }
             .items-table tr:nth-child(even) { background: #f9f9f9; }
-            .totals { margin-left: auto; width: 250px; }
-            .totals table { width: 100%; font-size: 11px; }
-            .totals td { padding: 4px 8px; }
-            .totals .total-row { font-weight: bold; font-size: 14px; background: #2e5aa6; color: white; }
-            .signature-section { margin-top: 20px; display: flex; justify-content: space-between; }
+            .totals { margin-left: auto; width: 200px; }
+            .totals table { width: 100%; font-size: 9px; }
+            .totals td { padding: 2px 4px; }
+            .totals .total-row { font-weight: bold; font-size: 10px; background: #f8fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+            .signature-section { margin-top: 10px; display: flex; justify-content: space-between; }
             .signature-box { text-align: center; }
-            .signature-image { width: 100px; height: 30px; object-fit: contain; margin-bottom: 5px; }
-            .signature-box p { font-size: 10px; margin: 2px 0; }
-            .notes { margin-top: 15px; padding: 8px; background: #f5f7fa; border-left: 3px solid #2e5aa6; font-size: 10px; }
-            .notes h4 { margin: 0 0 5px 0; font-size: 11px; }
-            .notes p { margin: 0; line-height: 1.3; }
+            .signature-image { width: 60px; height: 20px; object-fit: contain; margin-bottom: 3px; }
+            .signature-box p { font-size: 8px; margin: 1px 0; }
+            .notes { margin-top: 8px; padding: 5px; background: #f8fafc; border-left: 2px solid #e2e8f0; font-size: 8px; }
+            .notes h4 { margin: 0 0 3px 0; font-size: 9px; }
+            .notes p { margin: 0; line-height: 1.2; }
             @media print { body { padding: 0; } }
           </style>
         </head>
@@ -625,43 +625,551 @@ export default function DemoStyleForm() {
     invoiceForm.setValue('total', total);
   };
 
+  const generateCompactChecklistHtml = (checklistData: ChecklistData): string => {
+    return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Gas Safety Checklist Report</title>
+          <style>
+            @page { size: A4; margin: 6mm; }
+            body { 
+              font-family: Arial, sans-serif; 
+              margin: 0; 
+              padding: 4px; 
+              color: #333; 
+              font-size: 7px; 
+              line-height: 1.1; 
+              background-image: 
+                radial-gradient(circle at 20% 20%, rgba(230, 145, 60, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(230, 145, 60, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(230, 145, 60, 0.03) 0%, transparent 50%);
+              background-size: 300px 300px, 400px 400px, 250px 250px;
+              background-position: 0 0, 100% 100%, 50% 50%;
+              background-repeat: no-repeat;
+              min-height: 100vh;
+              position: relative;
+            }
+            body::before {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%) rotate(-45deg);
+              font-size: 48px;
+              color: rgba(230, 145, 60, 0.08);
+              font-weight: bold;
+              font-family: Arial, sans-serif;
+              z-index: -1;
+              pointer-events: none;
+              white-space: nowrap;
+              content: 'GAS SAFETY CERTIFICATE';
+            }
+            .header { 
+              text-align: center; 
+              margin-bottom: 10px; 
+              border-bottom: 2px solid #333; 
+              padding-bottom: 5px; 
+            }
+            .header h1 { 
+              font-size: 14px; 
+              margin: 0 0 3px 0; 
+              font-weight: bold; 
+            }
+            .header p { 
+              font-size: 8px; 
+              margin: 0; 
+              color: #666; 
+            }
+            .section { 
+              margin-bottom: 6px; 
+              border: 1px solid #ddd; 
+              border-radius: 3px; 
+            }
+            .section-header { 
+              background: #f5f5f5; 
+              padding: 2px 4px; 
+              font-weight: bold; 
+              font-size: 8px; 
+              border-bottom: 1px solid #ddd; 
+            }
+            .section-content { 
+              padding: 3px 4px; 
+            }
+            .row { 
+              display: flex; 
+              margin-bottom: 2px; 
+            }
+            .row-2 { 
+              display: flex; 
+              gap: 10px; 
+            }
+            .row-2 > div { 
+              flex: 1; 
+            }
+            .label { 
+              font-weight: bold; 
+              min-width: 80px; 
+              margin-right: 5px; 
+            }
+            .value { 
+              flex: 1; 
+            }
+            .checks-table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              font-size: 6px; 
+              margin-top: 2px; 
+            }
+            .checks-table th, 
+            .checks-table td { 
+              border: 1px solid #ddd; 
+              padding: 1px 2px; 
+              text-align: left; 
+            }
+            .checks-table th { 
+              background: #f0f0f0; 
+              font-weight: bold; 
+            }
+            .status-pass { color: #28a745; font-weight: bold; }
+            .status-fail { color: #dc3545; font-weight: bold; }
+            .status-na { color: #6c757d; }
+            .notes-section { 
+              margin-top: 6px; 
+              padding: 4px; 
+              background: #f9f9f9; 
+              border-radius: 3px; 
+            }
+            .signature-area { 
+              margin-top: 10px; 
+              display: flex; 
+              justify-content: space-between; 
+              gap: 20px; 
+            }
+            .signature-box { 
+              text-align: center; 
+              flex: 1; 
+            }
+            .signature-line { 
+              border-bottom: 1px solid #333; 
+              height: 20px; 
+              margin-bottom: 3px; 
+            }
+            @media print { 
+              body { padding: 0; } 
+              .section { page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <img src="/logo.png" alt="Company Logo" style="width: 50px; height: 38px; object-fit: contain; margin-bottom: 5px;">
+            <h1>Gas Safety Checklist Report</h1>
+            <p>Generated on ${new Date().toLocaleDateString('en-GB')}</p>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Business Information</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Company:</span>
+                    <span class="value">${checklistData.business?.companyAddress || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Postcode:</span>
+                    <span class="value">${checklistData.business?.postcode || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Telephone:</span>
+                    <span class="value">${checklistData.business?.telephone || 'N/A'}</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Engineer:</span>
+                    <span class="value">${checklistData.business?.engineerName || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Gas Safe No:</span>
+                    <span class="value">${checklistData.business?.gasSafeEngineerNo || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">License:</span>
+                    <span class="value">${checklistData.business?.licenseNo || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Site & Client Details</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Site Address:</span>
+                    <span class="value">${checklistData.siteDetails?.siteAddress || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Postcode:</span>
+                    <span class="value">${checklistData.siteDetails?.postcode || 'N/A'}</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Client:</span>
+                    <span class="value">${checklistData.clientDetails?.clientName || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Contact:</span>
+                    <span class="value">${checklistData.clientDetails?.contactNumber || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Installation Details</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Type:</span>
+                    <span class="value">${checklistData.installationDetails?.installationType || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Date:</span>
+                    <span class="value">${checklistData.installationDetails?.installationDate || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Manufacturer:</span>
+                    <span class="value">${checklistData.installationDetails?.manufacturer || 'N/A'}</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Model:</span>
+                    <span class="value">${checklistData.installationDetails?.model || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Serial No:</span>
+                    <span class="value">${checklistData.installationDetails?.serialNumber || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Installation Safety Checks</div>
+            <div class="section-content">
+              <table class="checks-table">
+                <tr>
+                  <th>Check Item</th>
+                  <th style="width: 60px;">Status</th>
+                </tr>
+                <tr>
+                  <td>Meter/Cylinder Satisfactory</td>
+                  <td class="status-${(checklistData.installationDetails?.satisfactoryMeterCylinder || 'NA').toLowerCase()}">${checklistData.installationDetails?.satisfactoryMeterCylinder || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Visible Pipework Inspection</td>
+                  <td class="status-${(checklistData.installationDetails?.inspectionVisiblePipework || 'NA').toLowerCase()}">${checklistData.installationDetails?.inspectionVisiblePipework || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>ECV Access & Operation</td>
+                  <td class="status-${(checklistData.installationDetails?.ecvAccessOperation || 'NA').toLowerCase()}">${checklistData.installationDetails?.ecvAccessOperation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Protective Equipotential Bonding</td>
+                  <td class="status-${(checklistData.installationDetails?.protectiveEquipotentialBonding || 'NA').toLowerCase()}">${checklistData.installationDetails?.protectiveEquipotentialBonding || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Tightness Test</td>
+                  <td class="status-${(checklistData.installationDetails?.tightnessTest || 'NA').toLowerCase()}">${checklistData.installationDetails?.tightnessTest || 'N/A'}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Detailed Safety Checks (Pass/Fail/N/A)</div>
+            <div class="section-content">
+              <table class="checks-table">
+                <tr>
+                  <th>Safety Check Item</th>
+                  <th style="width: 60px;">Status</th>
+                </tr>
+                <tr>
+                  <td>Gas Connection Isolation</td>
+                  <td class="status-${(checklistData.safetyChecks?.gasConnectionIsolation || 'NA').toLowerCase()}">${checklistData.safetyChecks?.gasConnectionIsolation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Electrical Connection Isolation</td>
+                  <td class="status-${(checklistData.safetyChecks?.electricalConnectionIsolation || 'NA').toLowerCase()}">${checklistData.safetyChecks?.electricalConnectionIsolation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Water Connection Isolation</td>
+                  <td class="status-${(checklistData.safetyChecks?.waterConnectionIsolation || 'NA').toLowerCase()}">${checklistData.safetyChecks?.waterConnectionIsolation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Overall Condition & Stability</td>
+                  <td class="status-${(checklistData.safetyChecks?.overallConditionStability || 'NA').toLowerCase()}">${checklistData.safetyChecks?.overallConditionStability || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Controls Operation</td>
+                  <td class="status-${(checklistData.safetyChecks?.controlsOperation || 'NA').toLowerCase()}">${checklistData.safetyChecks?.controlsOperation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Visual Inspection Heat Exchanger</td>
+                  <td class="status-${(checklistData.safetyChecks?.visualInspectionHeatExchanger || 'NA').toLowerCase()}">${checklistData.safetyChecks?.visualInspectionHeatExchanger || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Burner & Injectors</td>
+                  <td class="status-${(checklistData.safetyChecks?.burnerAndInjectors || 'NA').toLowerCase()}">${checklistData.safetyChecks?.burnerAndInjectors || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Fans</td>
+                  <td class="status-${(checklistData.safetyChecks?.fans || 'NA').toLowerCase()}">${checklistData.safetyChecks?.fans || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Ignition</td>
+                  <td class="status-${(checklistData.safetyChecks?.ignition || 'NA').toLowerCase()}">${checklistData.safetyChecks?.ignition || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Flame Picture</td>
+                  <td class="status-${(checklistData.safetyChecks?.flamePicture || 'NA').toLowerCase()}">${checklistData.safetyChecks?.flamePicture || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Correct Safety Devices Operation</td>
+                  <td class="status-${(checklistData.safetyChecks?.correctSafetyDevicesOperation || 'NA').toLowerCase()}">${checklistData.safetyChecks?.correctSafetyDevicesOperation || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Seals (Including Appliance Casing)</td>
+                  <td class="status-${(checklistData.safetyChecks?.sealsIncludingApplianceCasing || 'NA').toLowerCase()}">${checklistData.safetyChecks?.sealsIncludingApplianceCasing || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Condensate Trap Disposal</td>
+                  <td class="status-${(checklistData.safetyChecks?.condensateTrapDisposal || 'NA').toLowerCase()}">${checklistData.safetyChecks?.condensateTrapDisposal || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Pressure/Temperature Relief Valve</td>
+                  <td class="status-${(checklistData.safetyChecks?.pressureTemperatureReliefValve || 'NA').toLowerCase()}">${checklistData.safetyChecks?.pressureTemperatureReliefValve || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Return Air Plenum</td>
+                  <td class="status-${(checklistData.safetyChecks?.returnAirPlenum || 'NA').toLowerCase()}">${checklistData.safetyChecks?.returnAirPlenum || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Fireplace Catchment Space Closure Plate</td>
+                  <td class="status-${(checklistData.safetyChecks?.fireplaceCatchmentSpaceClosurePlate || 'NA').toLowerCase()}">${checklistData.safetyChecks?.fireplaceCatchmentSpaceClosurePlate || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Flue Flow Spillage Test</td>
+                  <td class="status-${(checklistData.safetyChecks?.flueFlowSpillageTest || 'NA').toLowerCase()}">${checklistData.safetyChecks?.flueFlowSpillageTest || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Satisfactory Chimney/Flue</td>
+                  <td class="status-${(checklistData.safetyChecks?.satisfactoryChimneyFlue || 'NO').toLowerCase()}">${checklistData.safetyChecks?.satisfactoryChimneyFlue || 'NO'}</td>
+                </tr>
+                <tr>
+                  <td>Satisfactory Ventilation</td>
+                  <td class="status-${(checklistData.safetyChecks?.satisfactoryVentilation || 'NO').toLowerCase()}">${checklistData.safetyChecks?.satisfactoryVentilation || 'NO'}</td>
+                </tr>
+              </table>
+              
+              ${checklistData.safetyChecks?.heatInputKwBtu || checklistData.safetyChecks?.operatingPressureMbar || checklistData.safetyChecks?.finalCombustionAnalyserReading ? `
+              <div style="margin-top: 6px; border-top: 1px solid #ddd; padding-top: 4px;">
+                <strong>Measurements:</strong>
+                ${checklistData.safetyChecks?.heatInputKwBtu ? `<br>Heat Input: ${checklistData.safetyChecks.heatInputKwBtu} kW/Btu` : ''}
+                ${checklistData.safetyChecks?.operatingPressureMbar ? `<br>Operating Pressure: ${checklistData.safetyChecks.operatingPressureMbar} mbar` : ''}
+                ${checklistData.safetyChecks?.finalCombustionAnalyserReading ? `<br>Combustion Analysis: ${checklistData.safetyChecks.finalCombustionAnalyserReading}` : ''}
+              </div>
+              ` : ''}
+            </div>
+          </div>
 
+          <div class="section">
+            <div class="section-header">Appliance Details</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Type:</span>
+                    <span class="value">${checklistData.applianceDetails?.applianceType || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Location:</span>
+                    <span class="value">${checklistData.applianceDetails?.location || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Gas Type:</span>
+                    <span class="value">${checklistData.applianceDetails?.gasType || 'N/A'}</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Manufacturer:</span>
+                    <span class="value">${checklistData.applianceDetails?.manufacturer || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Model:</span>
+                    <span class="value">${checklistData.applianceDetails?.model || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Input Rating:</span>
+                    <span class="value">${checklistData.applianceDetails?.inputRating || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">Summary & Status</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Safe to Use:</span>
+                    <span class="value status-${(checklistData.summaryNotes?.safeToUse || 'NO').toLowerCase()}">${checklistData.summaryNotes?.safeToUse || 'NO'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Classification:</span>
+                    <span class="value">${checklistData.summaryNotes?.giuspClassification || 'N/A'}</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Completion Date:</span>
+                    <span class="value">${checklistData.dateSection?.checksCompletedDate || 'N/A'}</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Next Service:</span>
+                    <span class="value">${checklistData.dateSection?.nextServiceMaintenanceDate || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          ${checklistData.summaryNotes?.warningAdvisoryNoticeSerial ? `
+          <div class="notes-section">
+            <strong>Warning/Advisory Notice:</strong><br>
+            ${checklistData.summaryNotes.warningAdvisoryNoticeSerial}
+          </div>
+          ` : ''}
+
+          <div class="section">
+            <div class="section-header">Compliance & Legal Information</div>
+            <div class="section-content">
+              <div class="row-2">
+                <div>
+                  <div class="row">
+                    <span class="label">Regulation:</span>
+                    <span class="value">Gas Safety (Installation and Use) Regulations 1998</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Standard:</span>
+                    <span class="value">BS 5440, BS 6891, BS 7967</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Authority:</span>
+                    <span class="value">Gas Safe Register</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <span class="label">Validity:</span>
+                    <span class="value">12 months from completion date</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Record Type:</span>
+                    <span class="value">Domestic Landlord/Homeowner</span>
+                  </div>
+                  <div class="row">
+                    <span class="label">Certificate ID:</span>
+                    <span class="value">GSC-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">Important Safety Information</div>
+            <div class="section-content" style="font-size: 6px; line-height: 1.2;">
+              <p style="margin: 2px 0;"><strong>Emergency Gas Leak:</strong> If you smell gas, turn off the gas supply at the meter, open windows and doors, do not use electrical switches or naked flames, and call the National Gas Emergency Service on 0800 111 999.</p>
+              <p style="margin: 2px 0;"><strong>Carbon Monoxide Warning:</strong> Symptoms include headaches, dizziness, nausea, breathlessness, collapse and loss of consciousness. If suspected, get fresh air immediately and seek medical advice.</p>
+              <p style="margin: 2px 0;"><strong>Maintenance:</strong> Annual servicing by a Gas Safe registered engineer is recommended. Keep this certificate for your records and provide a copy to tenants where applicable.</p>
+              <p style="margin: 2px 0;"><strong>Legal Requirement:</strong> Landlords must ensure annual gas safety checks and provide tenants with a copy of this certificate within 28 days of completion.</p>
+            </div>
+          </div>
+
+          <div class="signature-area" style="margin-top: 15px; min-height: 80px;">
+            <div class="signature-box">
+              ${checklistData.signatures?.engineerSignature ? `
+              <img src="/signature.png" alt="Engineer Signature" style="width: 80px; height: 25px; object-fit: contain; border-bottom: 1px solid #333; margin-bottom: 3px;">
+              ` : `
+              <div class="signature-line"></div>
+              `}
+              <p><strong>Gas Safe Registered Engineer</strong></p>
+              <p>Serial: ${checklistData.signatures?.engineerSerial || 'N/A'}</p>
+              <p>Name: ${checklistData.business?.engineerName || 'N/A'}</p>
+              <p>Gas Safe No: ${checklistData.business?.gasSafeEngineerNo || 'N/A'}</p>
+              <p>Date: ${checklistData.dateSection?.checksCompletedDate || '_______________'}</p>
+            </div>
+            <div class="signature-box">
+              ${checklistData.signatures?.clientSignature ? `
+              <div style="border-bottom: 1px solid #333; height: 25px; margin-bottom: 3px; display: flex; align-items: center; justify-content: center; font-style: italic;">
+                ${checklistData.signatures?.clientName || 'Client Signed'}
+              </div>
+              ` : `
+              <div class="signature-line"></div>
+              `}
+              <p><strong>Client/Landlord/Tenant</strong></p>
+              <p>Name: ${checklistData.signatures?.clientName || '_______________'}</p>
+              <p>Property: ${checklistData.siteDetails?.siteAddress?.substring(0, 25) || 'Property Address'}${(checklistData.siteDetails?.siteAddress?.length || 0) > 25 ? '...' : ''}</p>
+              <p>Contact: ${checklistData.clientDetails?.contactNumber || '_______________'}</p>
+              <p>Date: _______________</p>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 15px; padding: 8px; border: 1px solid #ddd; background: #f9f9f9;">
+            <p style="margin: 2px 0; font-weight: bold; font-size: 8px;">This certificate confirms that the gas installation and appliances listed have been checked and found to be safe at the time of inspection.</p>
+            <p style="margin: 2px 0; font-size: 6px;">Generated electronically on ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} | Certificate valid for 12 months from completion date</p>
+            <p style="margin: 2px 0; font-size: 6px; color: #666;">For verification, contact the issuing Gas Safe registered engineer | Keep this certificate in a safe place</p>
+          </div>
+        </body>
+        </html>
+    `;
+  };
 
   const onChecklistSubmit = async (data: Record<string, unknown>) => {
     setIsGenerating(true);
     try {
       const checklistData = data as ChecklistData;
-
-      // Create the checklist URL
-      const checklistData64 = btoa(JSON.stringify(checklistData));
-      const checklistUrl = `/checklist?data=${encodeURIComponent(checklistData64)}`;
-
-      // Try to open in new tab
-      const newWindow = window.open(checklistUrl, '_blank', 'noopener,noreferrer');
-
-      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-        // Popup was blocked, show a manual link
-        const userConfirm = confirm(
-          'Popup was blocked by your browser. Would you like to open the checklist in the same tab instead?'
-        );
-
-        if (userConfirm) {
-          // Navigate in the same window
-          window.location.href = checklistUrl;
-        } else {
-          // Show instructions to manually allow popups
-          alert(
-            'To open the checklist in a new tab:\n\n' +
-            '1. Allow popups for this site in your browser\n' +
-            '2. Or copy this URL and open it manually:\n' +
-            window.location.origin + checklistUrl
-          );
-        }
+      
+      // Generate compact single-page checklist HTML
+      const checklistHtml = generateCompactChecklistHtml(checklistData);
+      
+      // Create and open in new window for printing
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(checklistHtml);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        // Auto-print after a short delay
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      } else {
+        alert('Please allow popups to generate the checklist.');
       }
 
       setShowChecklistModal(false);
@@ -688,24 +1196,24 @@ export default function DemoStyleForm() {
         @page { size: A4 landscape; margin: 6mm; }
 
         body {
-          background: #f5f7fa !important;
+          background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%) !important;
           margin: 0;
           padding: 0;
           min-height: 100vh;
         }
 
         :root {
-          --blue: #2e5aa6;
-          --line: #2e5aa6;
+          --blue: #e6913c;
+          --line: #e6913c;
           --cell: #ffffff;
-          --head: #cdd9f3;
-          --pale: #fff6b8;
+          --head: #f5d49c;
+          --pale: #f5d49c;
         }
 
         .demo-form {
           font-family: Arial, Helvetica, sans-serif;
-          color: #000;
-          background: #f5f7fa;
+          color: #24476c;
+          background: linear-gradient(135deg, #f5d49c 0%, #ffffff 100%);
           min-height: 100vh;
           padding-bottom: 60px;
           -webkit-print-color-adjust: exact;
@@ -715,20 +1223,20 @@ export default function DemoStyleForm() {
         .toolbar {
           position: sticky;
           top: 0;
-          background: linear-gradient(135deg, #f7f9ff 0%, #eef3ff 100%);
-          border-bottom: 2px solid #c8d1ef;
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
+          border-bottom: 3px solid #d2af6c;
           padding: 16px 24px;
           display: flex;
           gap: 12px;
           justify-content: center;
           align-items: center;
           z-index: 50;
-          box-shadow: 0 2px 8px rgba(46, 90, 166, 0.1);
+          box-shadow: 0 4px 12px rgba(230, 145, 60, 0.25);
         }
 
         .btn {
           appearance: none;
-          border: 2px solid #b7c3e8;
+          border: 2px solid #d2af6c;
           background: #fff;
           padding: 12px 20px;
           border-radius: 10px;
@@ -741,22 +1249,24 @@ export default function DemoStyleForm() {
           gap: 8px;
           min-width: 140px;
           justify-content: center;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 4px rgba(230, 145, 60, 0.2);
+          color: #24476c;
         }
 
         .btn:hover {
           transform: translateY(-1px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 4px 8px rgba(230, 145, 60, 0.3);
+          background: #f5d49c;
         }
 
         .btn.primary {
-          background: linear-gradient(135deg, #2e5aa6 0%, #1e4a96 100%);
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
           color: #fff;
-          border-color: #2e5aa6;
+          border-color: #e6913c;
         }
 
         .btn.primary:hover {
-          background: linear-gradient(135deg, #1e4a96 0%, #0e3a86 100%);
+          background: linear-gradient(135deg, #e4903e 0%, #d2af6c 100%);
         }
 
         .btn:disabled {
@@ -789,10 +1299,22 @@ export default function DemoStyleForm() {
           margin: 20px auto;
           box-sizing: border-box;
           background: #fff;
-          padding: 20px;
+          padding: 32px;
           border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(46, 90, 166, 0.1);
-          border: 1px solid #e1e8f0;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+          border: 1px solid #e2e8f0;
+          position: relative;
+        }
+
+        .sheet::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #e6913c 0%, #e4903e 100%);
+          border-radius: 8px 8px 0 0;
         }
 
         @media print {
@@ -895,84 +1417,353 @@ export default function DemoStyleForm() {
             font-size: 7px !important;
             padding: 0px 1px !important;
           }
+
+          /* Remove problematic borders in print */
+          .bar {
+            border-bottom: none !important;
+          }
+
+          .block,
+          .hdr,
+          .modal-content .form-section {
+            border-left: none !important;
+          }
+
+          .modal-content .form-section h3 {
+            border-bottom: none !important;
+          }
+
+          .modal-content .form-section h3::after {
+            display: none !important;
+          }
+
+          /* Remove all orange borders and backgrounds in print */
+          .sheet::before {
+            display: none !important;
+          }
+
+          .bar::before {
+            display: none !important;
+          }
+
+          .ylw {
+            background: #ffffff !important;
+            border-color: #e2e8f0 !important;
+          }
+
+          .invoice-header {
+            border-bottom: 1px solid #e2e8f0 !important;
+          }
+
+          .invoice-title h1 {
+            color: #2d3748 !important;
+          }
+
+          .bill-to h3, .invoice-info h3 {
+            color: #2d3748 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+          }
+
+          .items-table th {
+            background: #f8fafc !important;
+            color: #2d3748 !important;
+          }
+
+          .totals .total-row {
+            background: #f8fafc !important;
+            color: #2d3748 !important;
+          }
+
+          .notes {
+            background: #f8fafc !important;
+            border-left: 1px solid #e2e8f0 !important;
+          }
+
+          /* Keep normal borders but remove orange colors */
+          .block,
+          .hdr {
+            border-color: #e2e8f0 !important;
+          }
+
+          .demo-table {
+            border-color: #e2e8f0 !important;
+          }
+
+          .demo-table th,
+          .demo-table td {
+            border-color: #e2e8f0 !important;
+          }
+
+          /* Remove border from title section in print */
+          .titleband {
+            border: none !important;
+            box-shadow: none !important;
+            margin-bottom: 10px !important;
+            padding: 10px 0 !important;
+          }
+
+          .titleband::after {
+            display: none !important;
+          }
+
+          .title-content {
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 5px !important;
+          }
+
+          .titleband h1 {
+            text-align: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 16px !important;
+            line-height: 1.2 !important;
+          }
+
+          .company-logo {
+            align-self: center !important;
+            margin: 0 0 5px 0 !important;
+          }
+
+          /* Single-page optimization for Invoice */
+          .invoice-header {
+            margin-bottom: 8px !important;
+            padding-bottom: 4px !important;
+          }
+
+          .invoice-title h1 {
+            font-size: 18px !important;
+          }
+
+          .invoice-details {
+            margin-bottom: 8px !important;
+            gap: 10px !important;
+          }
+
+          .bill-to h3, .invoice-info h3 {
+            font-size: 10px !important;
+            margin-bottom: 3px !important;
+          }
+
+          .bill-to p, .invoice-info p {
+            font-size: 8px !important;
+            margin: 1px 0 !important;
+            line-height: 1.1 !important;
+          }
+
+          .items-table {
+            font-size: 8px !important;
+            margin-bottom: 8px !important;
+          }
+
+          .items-table th {
+            padding: 2px 4px !important;
+            font-size: 8px !important;
+          }
+
+          .items-table td {
+            padding: 2px 4px !important;
+            font-size: 8px !important;
+          }
+
+          .totals {
+            font-size: 8px !important;
+          }
+
+          .notes {
+            font-size: 7px !important;
+            padding: 4px !important;
+            margin-top: 6px !important;
+          }
+
+          /* Single-page optimization for Checklist */
+          .checklist-container {
+            font-size: 7px !important;
+            line-height: 1.1 !important;
+          }
+
+          .checklist-header {
+            margin-bottom: 5px !important;
+            padding: 5px !important;
+          }
+
+          .checklist-section {
+            margin-bottom: 8px !important;
+            padding: 5px !important;
+          }
+
+          .checklist-section h3 {
+            font-size: 9px !important;
+            margin-bottom: 3px !important;
+          }
+
+          .checklist-item {
+            margin-bottom: 2px !important;
+            font-size: 7px !important;
+          }
+
+          .checklist-table {
+            font-size: 6px !important;
+          }
+
+          .checklist-table th,
+          .checklist-table td {
+            padding: 1px 2px !important;
+            font-size: 6px !important;
+          }
+
+          /* Force single page layout */
+          .invoice-container,
+          .checklist-container {
+            page-break-inside: avoid;
+            max-height: 260mm;
+            overflow: hidden;
+          }
+
+          /* Compress all spacing */
+          .invoice-container * {
+            margin-top: 0 !important;
+            margin-bottom: 2px !important;
+          }
+
+          .checklist-container * {
+            margin-top: 0 !important;
+            margin-bottom: 1px !important;
+          }
         }
 
         .titleband {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          align-items: end;
-          gap: 10px;
-          border-bottom: 3px solid var(--line);
-          margin-bottom: 6px;
-          padding-bottom: 3px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          padding: 32px;
+          margin-bottom: 32px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .titleband::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #e6913c 0%, #e4903e 100%);
         }
 
         .title-content {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 24px;
+          position: relative;
+          z-index: 1;
         }
 
         .company-logo {
           object-fit: contain;
+          border-radius: 8px;
+          padding: 4px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
         }
 
         .titleband h1 {
-          font-size: 18px;
+          font-size: 28px;
           margin: 0;
+          color: #2d3748;
+          text-shadow: none;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          line-height: 1.2;
         }
 
         .block {
-          border: 2px solid var(--line);
-          border-radius: 3px;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
           overflow: hidden;
-          margin-top: 6px;
+          margin-top: 24px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+          background: white;
         }
 
         .bar {
-          background: var(--blue);
-          color: #fff;
+          background: #f8fafc;
+          color: #2d3748;
           font-weight: 700;
-          font-size: 13px;
-          padding: 4px 6px;
+          font-size: 14px;
+          padding: 16px 20px;
           display: flex;
           align-items: center;
           justify-content: space-between;
+          position: relative;
+        }
+
+        .bar::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
         }
 
         .demo-table {
           width: 100%;
           border-collapse: collapse;
           table-layout: fixed;
-          font-size: 12px;
+          font-size: 13px;
+          background: white;
+          border-radius: 8px;
+          overflow: hidden;
+          border: 1px solid #e2e8f0;
         }
 
         .demo-table th,
         .demo-table td {
-          border: 1px solid var(--line);
-          padding: 4px 6px;
-          background: var(--cell);
+          border: none;
+          border-bottom: 1px solid #f1f5f9;
+          border-right: 1px solid #f1f5f9;
+          padding: 12px 16px;
+          background: white;
           vertical-align: middle;
         }
 
-        .demo-table th {
-          background: var(--head);
-          text-align: left;
-          font-weight: 700;
+        .demo-table th:last-child,
+        .demo-table td:last-child {
+          border-right: none;
         }
 
-        .ylw {
-          background: var(--pale) !important;
+        .demo-table tr:last-child th,
+        .demo-table tr:last-child td {
+          border-bottom: none;
+        }
+
+        .demo-table th {
+          background: #f8fafc;
+          text-align: left;
+          font-weight: 600;
+          color: #2d3748;
+          font-size: 14px;
         }
 
         .hdr {
-          margin-top: 6px;
+          margin-top: 24px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .ylw {
+          background: linear-gradient(135deg, #fffaf5 0%, rgba(254, 243, 199, 0.5) 100%) !important;
+          border-color: #e6913c !important;
         }
 
         .row3 {
           display: grid;
           grid-template-columns: 1fr 1fr 1fr;
-          gap: 6px;
+          gap: 24px;
+          margin-top: 32px;
         }
 
         .sigbox {
@@ -1025,16 +1816,21 @@ export default function DemoStyleForm() {
 
         .demo-input {
           width: 100%;
-          border: 0;
+          border: none;
           background: transparent !important;
           font: inherit;
-          color: #000;
-          -webkit-text-fill-color: #000;
+          color: #2d3748;
+          -webkit-text-fill-color: #2d3748;
+          font-weight: 500;
+          padding: 4px 8px;
+          border-radius: 4px;
+          transition: all 0.3s ease;
         }
 
         .demo-input:focus {
-          outline: 2px solid #2e5aa6;
+          outline: 2px solid #e6913c;
           outline-offset: -2px;
+          background: #fffaf5 !important;
         }
 
         /* Prevent browser extension interference */
@@ -1042,53 +1838,96 @@ export default function DemoStyleForm() {
           background: transparent !important;
         }
 
-        /* Invoice Modal Styles */
+        /* Modern Full-Page Modal Styles */
         .modal-overlay {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.7);
+          background: rgba(45, 55, 72, 0.95);
+          backdrop-filter: blur(10px);
           display: flex;
           align-items: center;
           justify-content: center;
           z-index: 1000;
-          padding: 20px;
+          padding: 0;
+          animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+          from {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+          }
+          to {
+            opacity: 1;
+            backdrop-filter: blur(10px);
+          }
         }
 
         .modal-content {
-          background: white;
-          border-radius: 12px;
-          width: 100%;
-          max-width: 800px;
-          max-height: 90vh;
-          overflow-y: auto;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+          border-radius: 0;
+          width: 100vw;
+          height: 100vh;
+          max-width: none;
+          max-height: 100vh;
+          overflow: hidden;
+          box-shadow: none;
+          display: flex;
+          flex-direction: column;
+          animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+          from {
+            transform: scale(0.9) translateY(50px);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
         }
 
         .modal-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 24px 32px;
-          border-bottom: 1px solid #e1e8f0;
-          background: linear-gradient(135deg, #2e5aa6 0%, #1e4080 100%);
+          padding: 24px 48px;
+          border-bottom: 1px solid #e2e8f0;
+          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
           color: white;
-          border-radius: 12px 12px 0 0;
+          border-radius: 0;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+          position: relative;
+        }
+
+        .modal-header::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 48px;
+          right: 48px;
+          height: 3px;
+          background: linear-gradient(90deg, #e6913c 0%, #e4903e 100%);
         }
 
         .modal-header h2 {
           margin: 0;
           font-size: 24px;
-          font-weight: 600;
+          font-weight: 700;
+          position: relative;
+          z-index: 1;
         }
 
         .modal-close {
-          background: none;
-          border: none;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
           color: white;
-          font-size: 32px;
+          font-size: 24px;
           cursor: pointer;
           padding: 0;
           width: 40px;
@@ -1096,29 +1935,220 @@ export default function DemoStyleForm() {
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 50%;
-          transition: background-color 0.2s;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+          position: relative;
+          z-index: 1;
         }
 
         .modal-close:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(230, 145, 60, 0.2);
+          border-color: rgba(230, 145, 60, 0.4);
+          transform: scale(1.05);
         }
 
         .invoice-form {
-          padding: 32px;
+          padding: 48px;
+          flex: 1;
+          overflow-y: auto;
+          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         }
 
-        .form-section {
+        .modal-form {
+          flex: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
+
+        .modal-body {
+          padding: 48px;
+          flex: 1;
+          overflow-y: auto;
+          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        /* Enhanced Form Section Styling for Full Page Modals */
+        .modal-content .form-section {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(230, 145, 60, 0.15);
+          border-radius: 12px;
+          padding: 32px;
           margin-bottom: 32px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
+        }
+
+        .modal-content .form-section:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+          border-color: rgba(230, 145, 60, 0.25);
+        }
+
+        .modal-content .form-section h3 {
+          color: #2d3748;
+          font-size: 20px;
+          font-weight: 700;
+          margin: 0 0 24px 0;
+          padding-bottom: 12px;
+          position: relative;
+        }
+
+        .modal-content .form-section h3::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 60px;
+          height: 2px;
+          background: #e6913c;
+        }
+
+        .modal-content .form-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 24px;
+          margin-top: 24px;
+        }
+
+        .modal-content .form-group {
+          position: relative;
+        }
+
+        .modal-content .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          color: #4a5568;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .modal-content .form-input,
+        .modal-content .form-group input,
+        .modal-content .form-group textarea,
+        .modal-content .form-group select {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 14px;
+          background: #ffffff;
+          transition: all 0.3s ease;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content .form-input:focus,
+        .modal-content .form-group input:focus,
+        .modal-content .form-group textarea:focus,
+        .modal-content .form-group select:focus {
+          outline: none;
+          border-color: #e6913c;
+          box-shadow: 0 0 0 3px rgba(230, 145, 60, 0.1);
+          background: #fffaf5;
+        }
+
+        /* Responsive Design for Full Page Modals */
+        @media (max-width: 768px) {
+          .modal-header {
+            padding: 24px 24px;
+          }
+
+          .modal-header h2 {
+            font-size: 24px;
+          }
+
+          .modal-body,
+          .invoice-form {
+            padding: 24px;
+          }
+
+          .modal-footer {
+            padding: 24px;
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .modal-footer > div:first-child {
+            text-align: center;
+          }
+
+          .modal-content .form-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .modal-content .form-section {
+            padding: 20px;
+            margin-bottom: 20px;
+          }
+
+          .btn.primary,
+          .btn.secondary {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .modal-header h2 {
+            font-size: 20px;
+          }
+
+          .modal-content .form-section h3 {
+            font-size: 18px;
+          }
+
+          .modal-close {
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+          }
         }
 
         .form-section h3 {
-          color: #2e5aa6;
+          color: #e6913c;
           font-size: 18px;
           font-weight: 600;
           margin: 0 0 16px 0;
           padding-bottom: 8px;
-          border-bottom: 2px solid #2e5aa6;
+          border-bottom: 2px solid #e6913c;
+        }
+
+        /* Custom Scrollbar for Modal Content */
+        .modal-body::-webkit-scrollbar,
+        .invoice-form::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track,
+        .invoice-form::-webkit-scrollbar-track {
+          background: rgba(230, 145, 60, 0.1);
+          border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb,
+        .invoice-form::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
+          border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover,
+        .invoice-form::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(135deg, #e4903e 0%, #d2af6c 100%);
+        }
+
+        /* Add a subtle progress indicator at the top */
+        .modal-content::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          background: linear-gradient(90deg, #e6913c 0%, #e4903e 50%, #d2af6c 100%);
+          z-index: 1001;
         }
 
         .form-grid {
@@ -1151,8 +2181,8 @@ export default function DemoStyleForm() {
 
         .form-input:focus {
           outline: none;
-          border-color: #2e5aa6;
-          box-shadow: 0 0 0 3px rgba(46, 90, 166, 0.1);
+          border-color: #e6913c;
+          box-shadow: 0 0 0 3px rgba(230, 145, 60, 0.1);
         }
 
         .invoice-item {
@@ -1224,31 +2254,81 @@ export default function DemoStyleForm() {
         }
 
         .total-line.total {
-          border-top: 2px solid #2e5aa6;
+          border-top: 2px solid #e6913c;
           margin-top: 12px;
           padding-top: 16px;
           font-weight: bold;
           font-size: 18px;
-          color: #2e5aa6;
+          color: #e6913c;
         }
 
         .modal-footer {
           display: flex;
-          justify-content: flex-end;
-          gap: 16px;
-          padding: 24px 32px;
-          border-top: 1px solid #e1e8f0;
+          justify-content: space-between;
+          align-items: center;
+          gap: 24px;
+          padding: 24px 48px;
+          border-top: 1px solid #e2e8f0;
           background: #f8fafc;
-          border-radius: 0 0 12px 12px;
+          border-radius: 0;
+          box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
         }
 
         .btn.secondary {
-          background: #6c757d;
-          color: white;
+          background: #ffffff;
+          color: #4a5568;
+          border: 2px solid #e2e8f0;
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn.secondary:hover {
-          background: #5a6268;
+          background: #f7fafc;
+          border-color: #cbd5e0;
+          color: #2d3748;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn.primary {
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
+          color: white;
+          border: none;
+          padding: 12px 32px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(230, 145, 60, 0.3);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn.primary::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+        }
+
+        .btn.primary:hover::before {
+          left: 100%;
+        }
+
+        .btn.primary:hover {
+          background: linear-gradient(135deg, #d67e33 0%, #cc7d35 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(230, 145, 60, 0.4);
         }
 
         .date-field {
@@ -1289,8 +2369,8 @@ export default function DemoStyleForm() {
         }
 
         .checklist-section:hover {
-          border-color: #2e5aa6;
-          box-shadow: 0 6px 20px rgba(46, 90, 166, 0.12);
+          border-color: #e6913c;
+          box-shadow: 0 6px 20px rgba(230, 145, 60, 0.12);
           transform: translateY(-2px);
         }
 
@@ -1300,10 +2380,10 @@ export default function DemoStyleForm() {
           font-size: 18px;
           font-weight: 700;
           padding: 12px 16px;
-          background: linear-gradient(135deg, #2e5aa6 0%, #1e4080 100%);
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
           border-radius: 8px;
           text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-          box-shadow: 0 3px 10px rgba(46, 90, 166, 0.3);
+          box-shadow: 0 3px 10px rgba(230, 145, 60, 0.3);
         }
 
         .checkbox-grid {
@@ -1331,7 +2411,7 @@ export default function DemoStyleForm() {
         .checkbox-item input[type="checkbox"] {
           width: 16px;
           height: 16px;
-          accent-color: #2e5aa6;
+          accent-color: #e6913c;
         }
 
         .appliance-checklist {
@@ -1351,7 +2431,7 @@ export default function DemoStyleForm() {
 
         .appliance-header h4 {
           margin: 0;
-          color: #2e5aa6;
+          color: #e6913c;
           font-size: 14px;
           font-weight: 600;
         }
@@ -1415,15 +2495,15 @@ export default function DemoStyleForm() {
         .form-group textarea:focus,
         .form-group select:focus {
           outline: none;
-          border-color: #2e5aa6;
-          box-shadow: 0 0 0 3px rgba(46, 90, 166, 0.1);
+          border-color: #e6913c;
+          box-shadow: 0 0 0 3px rgba(230, 145, 60, 0.1);
           transform: translateY(-1px);
         }
 
         .form-group label {
           display: block;
           margin-bottom: 8px;
-          color: #2e5aa6;
+          color: #e6913c;
           font-weight: 600;
           font-size: 14px;
         }
@@ -1443,8 +2523,8 @@ export default function DemoStyleForm() {
         }
 
         .safety-check-item:hover {
-          border-color: #2e5aa6;
-          box-shadow: 0 3px 10px rgba(46, 90, 166, 0.1);
+          border-color: #e6913c;
+          box-shadow: 0 3px 10px rgba(230, 145, 60, 0.1);
         }
 
         .safety-check-item strong {
@@ -1474,7 +2554,7 @@ export default function DemoStyleForm() {
           width: 16px;
           height: 16px;
           margin: 0;
-          accent-color: #2e5aa6;
+          accent-color: #e6913c;
         }
 
         /* Submit Button Styling */
@@ -1483,7 +2563,7 @@ export default function DemoStyleForm() {
           padding: 30px;
           background: linear-gradient(135deg, #f8fafc 0%, #e1e8f0 100%);
           border-radius: 12px;
-          border: 2px solid #2e5aa6;
+          border: 2px solid #e6913c;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1491,7 +2571,7 @@ export default function DemoStyleForm() {
         }
 
         .checklist-submit-btn {
-          background: linear-gradient(135deg, #2e5aa6 0%, #1e4080 100%);
+          background: linear-gradient(135deg, #e6913c 0%, #e4903e 100%);
           color: white;
           border: none;
           padding: 14px 32px;
@@ -1511,9 +2591,9 @@ export default function DemoStyleForm() {
         }
 
         .checklist-submit-btn:hover {
-          background: linear-gradient(135deg, #1e4080 0%, #2e5aa6 100%);
+          background: linear-gradient(135deg, #e4903e 0%, #e6913c 100%);
           transform: translateY(-3px);
-          box-shadow: 0 10px 30px rgba(46, 90, 166, 0.4);
+          box-shadow: 0 10px 30px rgba(230, 145, 60, 0.4);
         }
 
         .checklist-submit-btn:active {
@@ -2562,18 +3642,29 @@ export default function DemoStyleForm() {
               </div>
 
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn secondary"
-                  onClick={() => setShowInvoiceModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn primary"
-                  disabled={isGenerating}
-                >
+                <div>
+                  <p style={{ 
+                    margin: 0, 
+                    fontSize: '14px', 
+                    color: '#24476c',
+                    fontWeight: '600'
+                  }}>
+                    Complete all fields to generate your professional invoice
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <button
+                    type="button"
+                    className="btn secondary"
+                    onClick={() => setShowInvoiceModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn primary"
+                    disabled={isGenerating}
+                  >
                   {isGenerating ? (
                     <>
                       <Loader2 size={16} className="animate-spin" />
@@ -2585,7 +3676,8 @@ export default function DemoStyleForm() {
                       Generate Invoice
                     </>
                   )}
-                </button>
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -2605,7 +3697,7 @@ export default function DemoStyleForm() {
                 ×
               </button>
             </div>
-            <form onSubmit={checklistForm.handleSubmit(onChecklistSubmit)}>
+            <form onSubmit={checklistForm.handleSubmit(onChecklistSubmit)} className="modal-form">
               <div className="modal-body">
 
                 {/* 1. Business Section */}
@@ -2778,7 +3870,7 @@ export default function DemoStyleForm() {
                     </div>
                   </div>
 
-                  <h4 style={{ marginTop: '25px', marginBottom: '15px', color: '#2e5aa6', fontSize: '16px' }}>Installation Safety Checks</h4>
+                  <h4 style={{ marginTop: '25px', marginBottom: '15px', color: '#e6913c', fontSize: '16px' }}>Installation Safety Checks</h4>
 
                   <div className="safety-check-item">
                     <strong>Satisfactory Meter/Cylinder</strong>
@@ -3212,46 +4304,43 @@ export default function DemoStyleForm() {
 
               </div>
 
-              <div className="checklist-submit-container">
-                <button
-                  type="button"
-                  onClick={() => setShowChecklistModal(false)}
-                  className="btn-secondary"
-                  style={{
-                    padding: '14px 32px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    borderRadius: '10px',
-                    border: '2px solid #6c757d',
-                    background: 'white',
-                    color: '#6c757d',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    minWidth: '120px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="checklist-submit-btn"
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <CheckSquare size={16} />
-                      Generate
-                    </>
-                  )}
-                </button>
+              <div className="modal-footer">
+                <div>
+                  <p style={{ 
+                    margin: 0, 
+                    fontSize: '14px', 
+                    color: '#24476c',
+                    fontWeight: '600'
+                  }}>
+                    Ready to generate your gas safety checklist?
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowChecklistModal(false)}
+                    className="btn secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn primary"
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <CheckSquare size={16} />
+                        Generate
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

@@ -3,6 +3,8 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface ChecklistData {
   business: {
@@ -87,6 +89,46 @@ interface ChecklistData {
   };
 }
 
+function StatusBadge({ status }: { status: 'PASS' | 'FAIL' | 'NA' | 'YES' | 'NO' }) {
+  const getVariant = () => {
+    if (status === 'PASS' || status === 'YES') return 'default';
+    if (status === 'FAIL' || status === 'NO') return 'destructive';
+    return 'secondary';
+  };
+  
+  const getCustomStyle = () => {
+    if (status === 'PASS' || status === 'YES') {
+      return { 
+        backgroundColor: '#d2af6c', 
+        color: '#24476c',
+        border: '1px solid #e6913c'
+      };
+    }
+    if (status === 'FAIL' || status === 'NO') {
+      return { 
+        backgroundColor: '#ef4444', 
+        color: 'white',
+        border: '1px solid #dc2626'
+      };
+    }
+    return { 
+      backgroundColor: '#89a6c1', 
+      color: '#24476c',
+      border: '1px solid #4a4987'
+    };
+  };
+  
+  return (
+    <Badge 
+      variant={getVariant()} 
+      style={getCustomStyle()}
+      className="text-xs font-semibold px-3 py-1 rounded-full"
+    >
+      {status}
+    </Badge>
+  );
+}
+
 function ChecklistContent() {
   const searchParams = useSearchParams();
   const [checklistData, setChecklistData] = useState<ChecklistData | null>(null);
@@ -105,547 +147,580 @@ function ChecklistContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    // Auto-print when page loads
     const timer = setTimeout(() => {
       window.print();
     }, 1000);
-
     return () => clearTimeout(timer);
   }, []);
 
   if (!checklistData) {
-    return <div>Loading checklist...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg font-medium text-[#24476c]">Loading checklist...</div>
+      </div>
+    );
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-white text-[#24476c]">
       <style jsx global>{`
         @page { 
           size: A4; 
-          margin: 6mm; 
+          margin: 8mm; 
         }
         
         body {
-          font-family: Arial, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
           margin: 0;
-          padding: 4px;
-          color: #333;
-          font-size: 7px;
-          line-height: 1.1;
+          padding: 0;
+          color: #24476c;
+          font-size: 10px;
+          line-height: 1.4;
           background: #fff;
         }
 
-        .checklist-container {
+        .print-container {
           max-width: 100%;
           margin: 0;
-          padding: 0;
+          padding: 12px;
+          background: #ffffff;
         }
 
-        .checklist-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: start;
-          margin-bottom: 6px;
-          border-bottom: 1px solid #2e5aa6;
-          padding-bottom: 4px;
+        .header-section {
+          background: linear-gradient(135deg, #f5d49c 0%, #d2af6c 100%);
+          border: 3px solid #e6913c;
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 24px;
+          box-shadow: 0 8px 32px rgba(230, 145, 60, 0.15);
         }
 
-        .company-info {
-          flex: 1;
-        }
-
-        .company-logo {
-          width: 40px;
-          height: 30px;
-          object-fit: contain;
-          margin-bottom: 2px;
-        }
-
-        .company-owner {
-          font-size: 6px;
-          color: #666;
-          margin: 1px 0;
-        }
-
-        .checklist-title {
-          text-align: right;
-        }
-
-        .checklist-title h1 {
-          font-size: 14px;
-          color: #2e5aa6;
-          margin: 0;
-          font-weight: bold;
-        }
-
-        .service-date {
-          font-size: 8px;
-          color: #666;
-          margin: 1px 0;
-        }
-
-        .section {
-          margin-bottom: 4px;
+        .section-card {
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-left: 4px solid #e6913c;
+          border-radius: 12px;
+          margin-bottom: 24px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
           page-break-inside: avoid;
         }
 
-        .section h3 {
-          background: #2e5aa6;
+        .section-header {
+          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
           color: white;
-          padding: 1px 4px;
-          margin: 0 0 2px 0;
-          font-size: 7px;
-          font-weight: bold;
+          padding: 16px 24px;
+          font-weight: 700;
+          font-size: 16px;
+          letter-spacing: 0.5px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+          position: relative;
+        }
+
+        .section-header::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, #e6913c 0%, #e4903e 100%);
         }
 
         .section-content {
-          background: #f8fafc;
-          border: 1px solid #e1e8f0;
-          padding: 3px;
+          background: linear-gradient(135deg, #ffffff 0%, rgba(245, 212, 156, 0.1) 100%);
+          padding: 24px;
         }
 
         .details-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr;
-          gap: 4px;
-          font-size: 6px;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 16px;
+          font-size: 11px;
         }
 
         .details-grid-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 4px;
-          font-size: 6px;
+          gap: 16px;
+          font-size: 11px;
         }
 
         .field-group {
-          margin-bottom: 2px;
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%);
+          border: 2px solid #d2af6c;
+          border-radius: 12px;
+          padding: 16px;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(210, 175, 108, 0.15);
         }
 
-        .field-group label {
-          font-weight: bold;
-          color: #2e5aa6;
-          font-size: 6px;
+        .field-group:hover {
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.4) 0%, rgba(245, 212, 156, 0.2) 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(210, 175, 108, 0.25);
+        }
+
+        .field-label {
+          font-weight: 800;
+          color: #24476c;
+          font-size: 10px;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+
+        .field-value {
+          color: #4a4987;
+          font-size: 12px;
+          font-weight: 600;
+          line-height: 1.4;
         }
 
         .safety-table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 5px;
-          margin: 2px 0;
+          font-size: 10px;
+          margin: 0;
+          background: linear-gradient(135deg, #ffffff 0%, rgba(137, 166, 193, 0.05) 100%);
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(36, 71, 108, 0.12);
         }
 
         .safety-table th {
-          background: #cdd9f3;
-          color: #2e5aa6;
-          padding: 1px 2px;
+          background: linear-gradient(135deg, #24476c 0%, #4a4987 100%);
+          color: white;
+          padding: 16px 12px;
           text-align: center;
-          border: 1px solid #2e5aa6;
-          font-size: 5px;
-          font-weight: bold;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .safety-table td {
-          padding: 1px 2px;
-          border: 1px solid #ddd;
+          padding: 14px 12px;
+          border-bottom: 2px solid rgba(230, 145, 60, 0.2);
           text-align: center;
-          font-size: 5px;
+          font-size: 10px;
+          transition: background-color 0.3s ease;
         }
 
         .safety-table td:first-child {
           text-align: left;
-          font-size: 5px;
+          font-weight: 700;
+          color: #24476c;
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%);
+          border-right: 2px solid #d2af6c;
         }
 
-        .status-pass {
-          color: #28a745;
-          font-weight: bold;
-        }
-
-        .status-fail {
-          color: #dc3545;
-          font-weight: bold;
-        }
-
-        .status-na {
-          color: #6c757d;
+        .safety-table tr:hover {
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.2) 0%, rgba(137, 166, 193, 0.1) 100%);
         }
 
         .signature-section {
-          margin-top: 6px;
-          display: flex;
-          justify-content: space-between;
-          gap: 6px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+          margin-top: 24px;
         }
 
         .signature-box {
           text-align: center;
-          border: 1px solid #ddd;
-          padding: 4px;
-          flex: 1;
+          border: 3px solid #89a6c1;
+          border-radius: 16px;
+          padding: 24px;
+          background: linear-gradient(135deg, #ffffff 0%, rgba(137, 166, 193, 0.1) 100%);
+          box-shadow: 0 8px 24px rgba(137, 166, 193, 0.15);
         }
 
         .signature-image {
-          width: 60px;
-          height: 15px;
+          width: 120px;
+          height: 40px;
           object-fit: contain;
-          margin-bottom: 2px;
+          margin-bottom: 12px;
+          border-bottom: 3px solid #4a4987;
+          padding-bottom: 8px;
         }
 
-        .signature-box p {
-          font-size: 5px;
-          margin: 1px 0;
+        .signature-text {
+          font-size: 10px;
+          margin: 4px 0;
+          color: #24476c;
+          font-weight: 600;
         }
 
-        .notes-section {
-          background: #fff9e6;
-          border: 1px solid #ffd700;
-          padding: 3px;
-          margin: 2px 0;
-        }
-
-        .notes-section h4 {
-          margin: 0 0 2px 0;
-          color: #b8860b;
-          font-size: 6px;
-          font-weight: bold;
-        }
-
-        .notes-section p {
-          margin: 0;
-          font-size: 5px;
-        }
-
-        @media print {
-          body {
-            padding: 0;
-            font-size: 6px;
-          }
-          
-          .checklist-container {
-            transform: scale(0.95);
-            transform-origin: top left;
-          }
-        }
-
-        .safety-checks-grid {
-          margin-top: 4px;
-        }
-
-        .safety-check-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1px 0;
-          border-bottom: 1px solid #eee;
-          font-size: 6px;
-        }
-
-        .check-label {
-          font-weight: bold;
-          flex: 1;
-        }
-
-        .check-result {
-          font-weight: bold;
-          padding: 1px 4px;
-          border-radius: 2px;
-          min-width: 30px;
-          text-align: center;
-          font-size: 5px;
-        }
-
-        .check-result.pass {
-          background: #d4edda;
-          color: #155724;
-        }
-
-        .check-result.fail {
-          background: #f8d7da;
-          color: #721c24;
-        }
-
-        .check-result.na {
-          background: #fff3cd;
-          color: #856404;
+        .signature-text.name {
+          font-weight: 800;
+          font-size: 13px;
+          color: #4a4987;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
         .summary-grid {
           display: grid;
-          grid-template-columns: 1fr;
-          gap: 8px;
+          gap: 16px;
         }
 
         .summary-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 4px 0;
-          border-bottom: 1px solid #eee;
-          font-size: 7px;
+          padding: 18px 24px;
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(137, 166, 193, 0.1) 100%);
+          border: 2px solid #e6913c;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(230, 145, 60, 0.15);
         }
 
-        .summary-item label {
+        .summary-label {
+          font-weight: 800;
+          color: #24476c;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+
+        .installation-checks {
+          margin-top: 20px;
+          padding: 24px;
+          background: linear-gradient(135deg, rgba(245, 212, 156, 0.2) 0%, rgba(137, 166, 193, 0.1) 100%);
+          border: 2px solid #d2af6c;
+          border-radius: 12px;
+          box-shadow: 0 6px 18px rgba(210, 175, 108, 0.15);
+        }
+
+        .installation-checks h4 {
+          font-size: 13px;
+          font-weight: 800;
+          color: #24476c;
+          margin: 0 0 16px 0;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .check-grid {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 16px;
+          align-items: center;
+          padding: 12px 0;
+          border-bottom: 2px solid rgba(230, 145, 60, 0.2);
+        }
+
+        .check-grid:last-child {
+          border-bottom: none;
+        }
+
+        .check-label {
+          font-weight: 700;
+          color: #24476c;
+          font-size: 11px;
+        }
+
+        .status-pass {
+          color: #22c55e;
           font-weight: bold;
-          flex: 1;
+          font-size: 16px;
         }
 
-        .status-badge {
+        .status-fail {
+          color: #ef4444;
           font-weight: bold;
-          padding: 2px 8px;
-          border-radius: 3px;
-          font-size: 6px;
-          text-align: center;
-          min-width: 30px;
+          font-size: 16px;
         }
 
-        .status-badge.yes {
-          background: #d4edda;
-          color: #155724;
-        }
-
-        .status-badge.no {
-          background: #f8d7da;
-          color: #721c24;
-        }
-
-        .classification-badge {
+        .status-na {
+          color: #6b7280;
           font-weight: bold;
-          padding: 2px 8px;
-          border-radius: 3px;
-          font-size: 6px;
-          text-align: center;
-          min-width: 30px;
+          font-size: 16px;
         }
 
-        .classification-badge.none {
-          background: #e2e3e5;
-          color: #383d41;
-        }
-
-        .classification-badge.ar {
-          background: #fff3cd;
-          color: #856404;
-        }
-
-        .classification-badge.id {
-          background: #f8d7da;
-          color: #721c24;
-        }
-
-        @media screen {
+        @media print {
           body {
-            background: #f5f5f5;
-            padding: 10px;
+            font-size: 9px;
+          }
+          
+          .print-container {
+            padding: 0;
+            transform: scale(0.95);
+            transform-origin: top left;
           }
 
-          .checklist-container {
-            background: white;
-            padding: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 210mm;
-            margin: 0 auto;
+          .section-card {
+            margin-bottom: 12px;
+            box-shadow: none;
+          }
+
+          .section-content {
+            padding: 16px;
+          }
+
+          .field-group {
+            padding: 12px;
+          }
+
+          .signature-box {
+            padding: 16px;
           }
         }
       `}</style>
 
-      <div className="checklist-container">
-        <div className="checklist-header">
-          <div className="company-info">
-            <Image src="/logo.png" alt="Company Logo" width={40} height={30} className="company-logo" />
-            <p className="company-owner">AKM ZAHURUL ISLAM</p>
-          </div>
-          <div className="checklist-title">
-            <h1>SERVICE & MAINTENANCE CHECKLIST</h1>
-            <p className="service-date">Date: {new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString()}</p>
+            <div className="max-w-full mx-auto p-3 bg-white print:p-0 print-scale">
+        {/* Header */}
+        <div 
+          className="rounded-2xl p-6 mb-6 shadow-xl"
+          style={{
+            background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+            position: 'relative'
+          }}
+        >
+          <div 
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: 'linear-gradient(90deg, #e6913c 0%, #e4903e 100%)',
+              borderRadius: '0 0 16px 16px'
+            }}
+          />
+          <div className="flex justify-between items-start flex-wrap gap-4">
+            <div className="flex items-start gap-6">
+              <Image 
+                src="/logo.png" 
+                alt="Company Logo" 
+                width={100} 
+                height={80} 
+                className="object-contain rounded-lg shadow-lg border-2 border-white" 
+              />
+              <div>
+                <div className="font-bold text-2xl mb-2 text-white">AKM ZAHURUL ISLAM</div>
+                <div className="text-lg font-semibold text-gray-200">Gas Safe Registered Engineer</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <h1 className="text-2xl md:text-3xl font-bold mb-3 text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.3)'}}>
+                SERVICE & MAINTENANCE CHECKLIST
+              </h1>
+              <div 
+                className="text-lg font-semibold px-4 py-2 rounded-lg text-gray-700"
+                style={{backgroundColor: '#ffffff', border: '2px solid #e6913c', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+              >
+                Date: {new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString('en-GB')}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* 1. Business Section */}
-        <div className="section">
-          <h3>1. BUSINESS DETAILS</h3>
-          <div className="section-content">
+        {/* Business Details */}
+        <div 
+          className="mb-5 rounded-2xl overflow-hidden shadow-lg"
+          style={{
+            background: '#ffffff',
+            border: '2px solid #e6913c',
+            boxShadow: '0 8px 24px rgba(36, 71, 108, 0.12)'
+          }}
+        >
+          <div 
+            className="text-white p-4 font-bold text-sm uppercase tracking-wider"
+            style={{
+              background: 'linear-gradient(135deg, #24476c 0%, #4a4987 100%)',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+            }}
+          >
+            1. Business Details
+          </div>
+          <div 
+            className="p-6"
+            style={{background: 'linear-gradient(135deg, #ffffff 0%, rgba(245, 212, 156, 0.1) 100%)'}}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { label: 'Company Address', value: checklistData.business.companyAddress },
+                { label: 'Postcode', value: checklistData.business.postcode },
+                { label: 'Telephone', value: checklistData.business.telephone },
+                { label: 'Mobile', value: checklistData.business.mobile || 'N/A' },
+                { label: 'Gas Safe Engineer No', value: checklistData.business.gasSafeEngineerNo },
+                { label: 'Engineer Name', value: checklistData.business.engineerName },
+                { label: 'License No', value: checklistData.business.licenseNo }
+              ].map((field, index) => (
+                <div 
+                  key={index} 
+                  className="p-4 rounded-xl transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%)',
+                    border: '2px solid #d2af6c',
+                    boxShadow: '0 4px 12px rgba(210, 175, 108, 0.15)'
+                  }}
+                >
+                  <div className="font-bold text-[#24476c] text-xs mb-2 uppercase tracking-wide">{field.label}</div>
+                  <div className="text-[#4a4987] text-sm font-semibold">{field.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Site Details */}
+        <div 
+          className="mb-5 rounded-2xl overflow-hidden shadow-lg"
+          style={{
+            background: '#ffffff',
+            border: '2px solid #e6913c',
+            boxShadow: '0 8px 24px rgba(36, 71, 108, 0.12)'
+          }}
+        >
+          <div 
+            className="text-white p-4 font-bold text-sm uppercase tracking-wider"
+            style={{
+              background: 'linear-gradient(135deg, #24476c 0%, #4a4987 100%)',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+            }}
+          >
+            2. Site Details
+          </div>
+          <div 
+            className="p-6"
+            style={{background: 'linear-gradient(135deg, #ffffff 0%, rgba(245, 212, 156, 0.1) 100%)'}}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div 
+                className="p-4 rounded-xl"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%)',
+                  border: '2px solid #d2af6c'
+                }}
+              >
+                <div className="font-bold text-[#24476c] text-xs mb-2 uppercase tracking-wide">Site Address</div>
+                <div className="text-[#4a4987] text-sm font-semibold">{checklistData.siteDetails.siteAddress}</div>
+              </div>
+              <div 
+                className="p-4 rounded-xl"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%)',
+                  border: '2px solid #d2af6c'
+                }}
+              >
+                <div className="font-bold text-[#24476c] text-xs mb-2 uppercase tracking-wide">Postcode</div>
+                <div className="text-[#4a4987] text-sm font-semibold">{checklistData.siteDetails.postcode}</div>
+              </div>
+            </div>
+            {checklistData.siteDetails.accessInstructions && (
+              <div 
+                className="p-4 rounded-xl mt-4"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(245, 212, 156, 0.3) 0%, rgba(245, 212, 156, 0.1) 100%)',
+                  border: '2px solid #d2af6c'
+                }}
+              >
+                <div className="font-bold text-[#24476c] text-xs mb-2 uppercase tracking-wide">Access Instructions</div>
+                <div className="text-[#4a4987] text-sm font-semibold">{checklistData.siteDetails.accessInstructions}</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Client Details */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>3. Client Details</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <div className="details-grid">
-              <div className="field-group">
-                <label>Company Address:</label><br />
-                {checklistData.business.companyAddress}
-              </div>
-              <div className="field-group">
-                <label>Postcode:</label><br />
-                {checklistData.business.postcode}
-              </div>
-              <div className="field-group">
-                <label>Telephone:</label><br />
-                {checklistData.business.telephone}
-              </div>
-              <div className="field-group">
-                <label>Mobile:</label><br />
-                {checklistData.business.mobile || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Gas Safe Engineer No:</label><br />
-                {checklistData.business.gasSafeEngineerNo}
-              </div>
-              <div className="field-group">
-                <label>Engineer Name:</label><br />
-                {checklistData.business.engineerName}
-              </div>
-              <div className="field-group">
-                <label>License No:</label><br />
-                {checklistData.business.licenseNo}
-              </div>
+              {[
+                { label: 'Client Name', value: checklistData.clientDetails.clientName },
+                { label: 'Contact Number', value: checklistData.clientDetails.contactNumber },
+                { label: 'Email', value: checklistData.clientDetails.email || 'N/A' }
+              ].map((field, index) => (
+                <div key={index} className="field-group">
+                  <div className="field-label">{field.label}</div>
+                  <div className="field-value">{field.value}</div>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* 2. Site Details */}
-        <div className="section">
-          <h3>2. SITE DETAILS</h3>
-          <div className="section-content">
-            <div className="details-grid-2">
-              <div className="field-group">
-                <label>Site Address:</label><br />
-                {checklistData.siteDetails.siteAddress}
-              </div>
-              <div className="field-group">
-                <label>Postcode:</label><br />
-                {checklistData.siteDetails.postcode}
-              </div>
-              <div className="field-group" style={{ gridColumn: '1 / -1' }}>
-                <label>Access Instructions:</label><br />
-                {checklistData.siteDetails.accessInstructions || 'N/A'}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Client Details */}
-        <div className="section">
-          <h3>3. CLIENT DETAILS</h3>
-          <div className="section-content">
+        {/* Installation Details */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>4. Installation Details</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <div className="details-grid">
-              <div className="field-group">
-                <label>Client Name:</label><br />
-                {checklistData.clientDetails.clientName}
-              </div>
-              <div className="field-group">
-                <label>Contact Number:</label><br />
-                {checklistData.clientDetails.contactNumber}
-              </div>
-              <div className="field-group">
-                <label>Email:</label><br />
-                {checklistData.clientDetails.email || 'N/A'}
-              </div>
+              {[
+                { label: 'Installation Type', value: checklistData.installationDetails.installationType },
+                { label: 'Installation Date', value: checklistData.installationDetails.installationDate || 'N/A' },
+                { label: 'Manufacturer', value: checklistData.installationDetails.manufacturer || 'N/A' },
+                { label: 'Model', value: checklistData.installationDetails.model || 'N/A' },
+                { label: 'Serial Number', value: checklistData.installationDetails.serialNumber || 'N/A' }
+              ].map((field, index) => (
+                <div key={index} className="field-group">
+                  <div className="field-label">{field.label}</div>
+                  <div className="field-value">{field.value}</div>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
 
-        {/* 4. Installation Details */}
-        <div className="section">
-          <h3>4. INSTALLATION DETAILS</h3>
-          <div className="section-content">
+            <div className="installation-checks">
+              <h4>Installation Safety Checks</h4>
+              {[
+                { key: 'satisfactoryMeterCylinder', label: 'Satisfactory Meter/Cylinder' },
+                { key: 'inspectionVisiblePipework', label: 'Inspection of Visible Pipework' },
+                { key: 'ecvAccessOperation', label: 'ECV Access and Operation' },
+                { key: 'protectiveEquipotentialBonding', label: 'Protective Equipotential Bonding' },
+                { key: 'tightnessTest', label: 'Tightness Test' }
+              ].map((item) => {
+                const status = checklistData.installationDetails[item.key as keyof typeof checklistData.installationDetails] as string;
+                return (
+                  <div key={item.key} className="check-grid">
+                    <div className="check-label">{item.label}</div>
+                    <StatusBadge status={status as 'PASS' | 'FAIL' | 'NA'} />
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Appliance Details */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>5. Appliance Details</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <div className="details-grid">
-              <div className="field-group">
-                <label>Installation Type:</label><br />
-                {checklistData.installationDetails.installationType}
-              </div>
-              <div className="field-group">
-                <label>Installation Date:</label><br />
-                {checklistData.installationDetails.installationDate || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Manufacturer:</label><br />
-                {checklistData.installationDetails.manufacturer || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Model:</label><br />
-                {checklistData.installationDetails.model || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Serial Number:</label><br />
-                {checklistData.installationDetails.serialNumber || 'N/A'}
-              </div>
+              {[
+                { label: 'Appliance Type', value: checklistData.applianceDetails.applianceType },
+                { label: 'Location', value: checklistData.applianceDetails.location },
+                { label: 'Manufacturer', value: checklistData.applianceDetails.manufacturer || 'N/A' },
+                { label: 'Model', value: checklistData.applianceDetails.model || 'N/A' },
+                { label: 'Serial Number', value: checklistData.applianceDetails.serialNumber || 'N/A' },
+                { label: 'Gas Type', value: checklistData.applianceDetails.gasType || 'N/A' },
+                { label: 'Input Rating', value: checklistData.applianceDetails.inputRating || 'N/A' }
+              ].map((field, index) => (
+                <div key={index} className="field-group">
+                  <div className="field-label">{field.label}</div>
+                  <div className="field-value">{field.value}</div>
+                </div>
+              ))}
             </div>
+          </CardContent>
+        </Card>
 
-            <div style={{ marginTop: '8px' }}>
-              <h4 style={{ fontSize: '8px', fontWeight: 'bold', margin: '4px 0', color: '#2e5aa6' }}>INSTALLATION SAFETY CHECKS</h4>
-              <div className="safety-checks-grid">
-                <div className="safety-check-row">
-                  <span className="check-label">Satisfactory Meter/Cylinder:</span>
-                  <span className={`check-result ${checklistData.installationDetails.satisfactoryMeterCylinder?.toLowerCase()}`}>
-                    {checklistData.installationDetails.satisfactoryMeterCylinder || 'N/A'}
-                  </span>
-                </div>
-                <div className="safety-check-row">
-                  <span className="check-label">Inspection of Visible Pipework:</span>
-                  <span className={`check-result ${checklistData.installationDetails.inspectionVisiblePipework?.toLowerCase()}`}>
-                    {checklistData.installationDetails.inspectionVisiblePipework || 'N/A'}
-                  </span>
-                </div>
-                <div className="safety-check-row">
-                  <span className="check-label">ECV Access and Operation:</span>
-                  <span className={`check-result ${checklistData.installationDetails.ecvAccessOperation?.toLowerCase()}`}>
-                    {checklistData.installationDetails.ecvAccessOperation || 'N/A'}
-                  </span>
-                </div>
-                <div className="safety-check-row">
-                  <span className="check-label">Protective Equipotential Bonding:</span>
-                  <span className={`check-result ${checklistData.installationDetails.protectiveEquipotentialBonding?.toLowerCase()}`}>
-                    {checklistData.installationDetails.protectiveEquipotentialBonding || 'N/A'}
-                  </span>
-                </div>
-                <div className="safety-check-row">
-                  <span className="check-label">Tightness Test:</span>
-                  <span className={`check-result ${checklistData.installationDetails.tightnessTest?.toLowerCase()}`}>
-                    {checklistData.installationDetails.tightnessTest || 'N/A'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 5. Appliance Details */}
-        <div className="section">
-          <h3>5. APPLIANCE DETAILS</h3>
-          <div className="section-content">
-            <div className="details-grid">
-              <div className="field-group">
-                <label>Appliance Type:</label><br />
-                {checklistData.applianceDetails.applianceType}
-              </div>
-              <div className="field-group">
-                <label>Location:</label><br />
-                {checklistData.applianceDetails.location}
-              </div>
-              <div className="field-group">
-                <label>Manufacturer:</label><br />
-                {checklistData.applianceDetails.manufacturer || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Model:</label><br />
-                {checklistData.applianceDetails.model || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Serial Number:</label><br />
-                {checklistData.applianceDetails.serialNumber || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Gas Type:</label><br />
-                {checklistData.applianceDetails.gasType || 'N/A'}
-              </div>
-              <div className="field-group">
-                <label>Input Rating:</label><br />
-                {checklistData.applianceDetails.inputRating || 'N/A'}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 6. Safety Checks */}
-        <div className="section">
-          <h3>6. SAFETY CHECKS</h3>
-          <div className="section-content">
+        {/* Safety Checks */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>6. Safety Checks</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <table className="safety-table">
               <thead>
                 <tr>
@@ -675,7 +750,7 @@ function ChecklistContent() {
                   { key: 'fireplaceCatchmentSpaceClosurePlate', label: 'Fireplace Catchment Space and Closure Plate' },
                   { key: 'flueFlowSpillageTest', label: 'Flue Flow & Spillage Test' }
                 ].map((item) => {
-                  const status = checklistData.safetyChecks[item.key as keyof typeof checklistData.safetyChecks];
+                  const status = checklistData.safetyChecks[item.key as keyof typeof checklistData.safetyChecks] as string;
                   return (
                     <tr key={item.key}>
                       <td>{item.label}</td>
@@ -686,7 +761,6 @@ function ChecklistContent() {
                   );
                 })}
 
-                {/* Satisfactory Chimney/Flue - Yes/No Display */}
                 <tr>
                   <td>Satisfactory Chimney/Flue</td>
                   <td className={checklistData.safetyChecks.satisfactoryChimneyFlue === 'YES' ? 'status-pass' : ''}>
@@ -698,7 +772,6 @@ function ChecklistContent() {
                   <td></td>
                 </tr>
 
-                {/* Satisfactory Ventilation - Yes/No Display */}
                 <tr>
                   <td>Satisfactory Ventilation</td>
                   <td className={checklistData.safetyChecks.satisfactoryVentilation === 'YES' ? 'status-pass' : ''}>
@@ -710,103 +783,123 @@ function ChecklistContent() {
                   <td></td>
                 </tr>
 
-                {/* Heat Input/Operating Pressure - Custom Display */}
                 <tr>
                   <td>Heat Input/Operating Pressure</td>
-                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '6px' }}>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <span><strong>KW/BTU:</strong> {checklistData.safetyChecks.heatInputKwBtu || 'N/A'}</span>
-                      <span><strong>mbar:</strong> {checklistData.safetyChecks.operatingPressureMbar || 'N/A'}</span>
+                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '10px', fontWeight: '600' }}>
+                    <div className="flex gap-6">
+                      <span style={{color: '#24476c'}}><strong>KW/BTU:</strong> {checklistData.safetyChecks.heatInputKwBtu || 'N/A'}</span>
+                      <span style={{color: '#24476c'}}><strong>mbar:</strong> {checklistData.safetyChecks.operatingPressureMbar || 'N/A'}</span>
                     </div>
                   </td>
                 </tr>
 
-                {/* Final Combustion Analyser Reading - Custom Display */}
                 <tr>
                   <td>Final Combustion Analyser Reading</td>
-                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '6px' }}>
+                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '10px', fontWeight: '600' }}>
                     {checklistData.safetyChecks.finalCombustionAnalyserNA ?
                       <span className="status-na">N/A</span> :
-                      <span>{checklistData.safetyChecks.finalCombustionAnalyserReading || 'N/A'}</span>
+                      <span style={{color: '#24476c'}}>{checklistData.safetyChecks.finalCombustionAnalyserReading || 'N/A'}</span>
                     }
                   </td>
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* 7. Summary and Notes */}
-        <div className="section">
-          <h3>7. SUMMARY AND NOTES</h3>
-          <div className="section-content">
+        {/* Summary */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>7. Summary and Notes</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <div className="summary-grid">
               <div className="summary-item">
-                <label>Safe to Use:</label>
-                <span className={`status-badge ${checklistData.summaryNotes.safeToUse?.toLowerCase()}`}>
-                  {checklistData.summaryNotes.safeToUse || 'N/A'}
-                </span>
+                <div className="summary-label">Safe to Use</div>
+                <StatusBadge status={checklistData.summaryNotes.safeToUse as 'YES' | 'NO'} />
               </div>
               <div className="summary-item">
-                <label>GIUSP Classification:</label>
-                <span className={`classification-badge ${checklistData.summaryNotes.giuspClassification?.toLowerCase()}`}>
+                <div className="summary-label">GIUSP Classification</div>
+                <Badge 
+                  variant="secondary" 
+                  className="font-semibold"
+                  style={{backgroundColor: '#89a6c1', color: '#24476c', border: '1px solid #4a4987'}}
+                >
                   {checklistData.summaryNotes.giuspClassification || 'N/A'}
-                </span>
+                </Badge>
               </div>
               <div className="summary-item">
-                <label>Warning/Advisory Notice - Serial No:</label>
-                <span>{checklistData.summaryNotes.warningAdvisoryNoticeSerial || 'N/A'}</span>
+                <div className="summary-label">Warning/Advisory Notice - Serial No</div>
+                <div className="text-sm font-semibold" style={{color: '#4a4987'}}>{checklistData.summaryNotes.warningAdvisoryNoticeSerial || 'N/A'}</div>
               </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* 8. Date Section */}
-        <div className="section">
-          <h3>8. DATE SECTION</h3>
-          <div className="section-content">
+        {/* Date Section */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>8. Date Section</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
             <div className="details-grid-2">
               <div className="field-group">
-                <label>Checks Completed Date:</label><br />
-                {new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString()}
+                <div className="field-label">Checks Completed Date</div>
+                <div className="field-value">{new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString('en-GB')}</div>
               </div>
               <div className="field-group">
-                <label>Next Service/Maintenance Date:</label><br />
-                {checklistData.dateSection.nextServiceMaintenanceDate ?
-                  new Date(checklistData.dateSection.nextServiceMaintenanceDate).toLocaleDateString() : 'N/A'}
+                <div className="field-label">Next Service/Maintenance Date</div>
+                <div className="field-value">
+                  {checklistData.dateSection.nextServiceMaintenanceDate ?
+                    new Date(checklistData.dateSection.nextServiceMaintenanceDate).toLocaleDateString('en-GB') : 'N/A'}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* 9. Signatures */}
-        <div className="section">
-          <h3>9. SIGNATURES</h3>
-          <div className="signature-section">
-            <div className="signature-box">
-              <Image src="/signature.png" alt="Engineer Signature" width={60} height={15} className="signature-image" />
-              <p><strong>{checklistData.business.engineerName}</strong></p>
-              <p>Gas Safe Engineer</p>
-              <p>Reg No: {checklistData.business.gasSafeEngineerNo}</p>
-              <p>Serial: {checklistData.signatures.engineerSerial}</p>
-              <p>Date: {new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString()}</p>
+        {/* Signatures */}
+        <Card className="section-card">
+          <CardHeader className="section-header">
+            <CardTitle>9. Signatures</CardTitle>
+          </CardHeader>
+          <CardContent className="section-content">
+            <div className="signature-section">
+              <div className="signature-box">
+                <Image 
+                  src="/signature.png" 
+                  alt="Engineer Signature" 
+                  width={120} 
+                  height={40} 
+                  className="signature-image" 
+                />
+                <div className="signature-text name">{checklistData.business.engineerName}</div>
+                <div className="signature-text">Gas Safe Engineer</div>
+                <div className="signature-text">Reg No: {checklistData.business.gasSafeEngineerNo}</div>
+                <div className="signature-text">Serial: {checklistData.signatures.engineerSerial}</div>
+                <div className="signature-text">Date: {new Date(checklistData.dateSection.checksCompletedDate).toLocaleDateString('en-GB')}</div>
+              </div>
+              <div className="signature-box">
+                <div style={{ height: '40px', borderBottom: '3px solid #4a4987', marginBottom: '12px' }}></div>
+                <div className="signature-text name">Client Signature</div>
+                <div className="signature-text">{checklistData.signatures.clientName || 'Client Name'}</div>
+                <div className="signature-text">Date: _______________</div>
+              </div>
             </div>
-            <div className="signature-box">
-              <div style={{ height: '15px', borderBottom: '1px solid #333', marginBottom: '2px' }}></div>
-              <p><strong>Client Signature</strong></p>
-              <p>{checklistData.signatures.clientName || 'Client Name'}</p>
-              <p>Date: _______________</p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </>
+    </div>
   );
 }
 
 export default function ChecklistPage() {
   return (
-    <Suspense fallback={<div>Loading checklist...</div>}>
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg font-medium" style={{color: '#24476c'}}>Loading checklist...</div>
+      </div>
+    }>
       <ChecklistContent />
     </Suspense>
   );
