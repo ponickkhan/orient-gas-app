@@ -181,35 +181,36 @@ const checklistSchema = z.object({
 
   // 6. Safety Checks (Pass/Fail/N/A)
   safetyChecks: z.object({
-    gasConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
+    gasConnectionIsolation: z.enum(['PASS', 'FAIL']),
     electricalConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
     waterConnectionIsolation: z.enum(['PASS', 'FAIL', 'NA']),
-    overallConditionStability: z.enum(['PASS', 'FAIL', 'NA']),
+    overallConditionStability: z.enum(['PASS', 'FAIL']),
     controlsOperation: z.enum(['PASS', 'FAIL', 'NA']),
     visualInspectionHeatExchanger: z.enum(['PASS', 'FAIL', 'NA']),
-    burnerAndInjectors: z.enum(['PASS', 'FAIL', 'NA']),
+    burnerAndInjectors: z.enum(['PASS', 'FAIL']),
     fans: z.enum(['PASS', 'FAIL', 'NA']),
-    ignition: z.enum(['PASS', 'FAIL', 'NA']),
+    ignition: z.enum(['PASS', 'FAIL']),
     flamePicture: z.enum(['PASS', 'FAIL', 'NA']),
-    correctSafetyDevicesOperation: z.enum(['PASS', 'FAIL', 'NA']),
-    heatInputOperatingPressure: z.enum(['PASS', 'FAIL', 'NA']),
+    correctSafetyDevicesOperation: z.enum(['PASS', 'FAIL']),
+    heatInputKwBtu: z.string().optional(),
+    operatingPressureMbar: z.string().optional(),
     sealsIncludingApplianceCasing: z.enum(['PASS', 'FAIL', 'NA']),
     condensateTrapDisposal: z.enum(['PASS', 'FAIL', 'NA']),
     pressureTemperatureReliefValve: z.enum(['PASS', 'FAIL', 'NA']),
     returnAirPlenum: z.enum(['PASS', 'FAIL', 'NA']),
     fireplaceCatchmentSpaceClosurePlate: z.enum(['PASS', 'FAIL', 'NA']),
     flueFlowSpillageTest: z.enum(['PASS', 'FAIL', 'NA']),
-    satisfactoryChimneyFlue: z.enum(['PASS', 'FAIL', 'NA']),
-    satisfactoryVentilation: z.enum(['PASS', 'FAIL', 'NA']),
-    finalCombustionAnalyserReading: z.enum(['PASS', 'FAIL', 'NA'])
+    satisfactoryChimneyFlue: z.enum(['YES', 'NO']),
+    satisfactoryVentilation: z.enum(['YES', 'NO']),
+    finalCombustionAnalyserReading: z.string().optional(),
+    finalCombustionAnalyserNA: z.boolean().optional()
   }),
 
   // 7. Summary and Notes
   summaryNotes: z.object({
-    workCarriedOut: z.string().optional(),
-    defectsFound: z.string().optional(),
-    recommendedActions: z.string().optional(),
-    additionalNotes: z.string().optional()
+    safeToUse: z.enum(['YES', 'NO']),
+    giuspClassification: z.enum(['NONE', 'AR', 'ID']),
+    warningAdvisoryNoticeSerial: z.string().optional()
   }),
 
   // 8. Date Section
@@ -370,33 +371,34 @@ export default function DemoStyleForm() {
         inputRating: ''
       },
       safetyChecks: {
-        gasConnectionIsolation: 'NA',
+        gasConnectionIsolation: 'PASS',
         electricalConnectionIsolation: 'NA',
         waterConnectionIsolation: 'NA',
-        overallConditionStability: 'NA',
+        overallConditionStability: 'PASS',
         controlsOperation: 'NA',
         visualInspectionHeatExchanger: 'NA',
-        burnerAndInjectors: 'NA',
+        burnerAndInjectors: 'PASS',
         fans: 'NA',
-        ignition: 'NA',
+        ignition: 'PASS',
         flamePicture: 'NA',
-        correctSafetyDevicesOperation: 'NA',
-        heatInputOperatingPressure: 'NA',
+        correctSafetyDevicesOperation: 'PASS',
+        heatInputKwBtu: '',
+        operatingPressureMbar: '',
         sealsIncludingApplianceCasing: 'NA',
         condensateTrapDisposal: 'NA',
         pressureTemperatureReliefValve: 'NA',
         returnAirPlenum: 'NA',
         fireplaceCatchmentSpaceClosurePlate: 'NA',
         flueFlowSpillageTest: 'NA',
-        satisfactoryChimneyFlue: 'NA',
-        satisfactoryVentilation: 'NA',
-        finalCombustionAnalyserReading: 'NA'
+        satisfactoryChimneyFlue: 'YES',
+        satisfactoryVentilation: 'YES',
+        finalCombustionAnalyserReading: '',
+        finalCombustionAnalyserNA: false
       },
       summaryNotes: {
-        workCarriedOut: '',
-        defectsFound: '',
-        recommendedActions: '',
-        additionalNotes: ''
+        safeToUse: 'YES',
+        giuspClassification: 'NONE',
+        warningAdvisoryNoticeSerial: ''
       },
       dateSection: {
         checksCompletedDate: new Date().toISOString().split('T')[0],
@@ -2882,11 +2884,10 @@ export default function DemoStyleForm() {
                   <h3>6. Safety Checks (Pass/Fail/N/A)</h3>
                   <div style={{ display: 'grid', gap: '8px' }}>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>APPLIANCE Gas Connection and Isolation</strong>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="PASS" /> Pass</label>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.gasConnectionIsolation')} value="NA" /> N/A</label>
                     </div>
 
                     <div className="safety-check-item">
@@ -2903,11 +2904,10 @@ export default function DemoStyleForm() {
                       <label><input type="radio" {...checklistForm.register('safetyChecks.waterConnectionIsolation')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Overall Condition, Stability and Controls Operation</strong>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="PASS" /> Pass</label>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.overallConditionStability')} value="NA" /> N/A</label>
                     </div>
 
                     <div className="safety-check-item">
@@ -2924,11 +2924,10 @@ export default function DemoStyleForm() {
                       <label><input type="radio" {...checklistForm.register('safetyChecks.visualInspectionHeatExchanger')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Burner and Injectors</strong>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="PASS" /> Pass</label>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.burnerAndInjectors')} value="NA" /> N/A</label>
                     </div>
 
                     <div className="safety-check-item">
@@ -2938,11 +2937,10 @@ export default function DemoStyleForm() {
                       <label><input type="radio" {...checklistForm.register('safetyChecks.fans')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Ignition</strong>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="PASS" /> Pass</label>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.ignition')} value="NA" /> N/A</label>
                     </div>
 
                     <div className="safety-check-item">
@@ -2952,18 +2950,55 @@ export default function DemoStyleForm() {
                       <label><input type="radio" {...checklistForm.register('safetyChecks.flamePicture')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Correct Safety Device(s) Operation</strong>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="PASS" /> Pass</label>
                       <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.correctSafetyDevicesOperation')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
-                      <strong>Heat Input/Operating Pressure</strong>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="PASS" /> Pass</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.heatInputOperatingPressure')} value="NA" /> N/A</label>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '2fr 1fr 1fr',
+                      gap: '12px',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      marginBottom: '8px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      border: '1px solid #e1e8f0',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
+                    }}>
+                      <strong style={{ color: '#1e293b', fontWeight: '600', fontSize: '13px' }}>Heat Input/Operating Pressure</strong>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <label style={{ fontSize: '11px', fontWeight: '500', color: '#2c3e50' }}>KW/BTU:</label>
+                        <input
+                          type="text"
+                          {...checklistForm.register('safetyChecks.heatInputKwBtu')}
+                          placeholder="Enter value"
+                          style={{
+                            padding: '6px 8px',
+                            border: '1px solid #e1e8f0',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            color: '#2c3e50'
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <label style={{ fontSize: '11px', fontWeight: '500', color: '#2c3e50' }}>mbar:</label>
+                        <input
+                          type="text"
+                          {...checklistForm.register('safetyChecks.operatingPressureMbar')}
+                          placeholder="Enter value"
+                          style={{
+                            padding: '6px 8px',
+                            border: '1px solid #e1e8f0',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            color: '#2c3e50'
+                          }}
+                        />
+                      </div>
                     </div>
 
                     <div className="safety-check-item">
@@ -3008,25 +3043,54 @@ export default function DemoStyleForm() {
                       <label><input type="radio" {...checklistForm.register('safetyChecks.flueFlowSpillageTest')} value="NA" /> N/A</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Satisfactory Chimney/Flue</strong>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="PASS" /> Pass</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="NA" /> N/A</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="YES" /> Yes</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryChimneyFlue')} value="NO" /> No</label>
                     </div>
 
-                    <div className="safety-check-item">
+                    <div className="safety-check-item" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
                       <strong>Satisfactory Ventilation</strong>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="PASS" /> Pass</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="NA" /> N/A</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="YES" /> Yes</label>
+                      <label><input type="radio" {...checklistForm.register('safetyChecks.satisfactoryVentilation')} value="NO" /> No</label>
                     </div>
 
-                    <div className="safety-check-item">
-                      <strong>Final Combustion Analyser Reading</strong>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="PASS" /> Pass</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="FAIL" /> Fail</label>
-                      <label><input type="radio" {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')} value="NA" /> N/A</label>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '2fr 2fr 1fr',
+                      gap: '12px',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      marginBottom: '8px',
+                      background: 'white',
+                      borderRadius: '8px',
+                      border: '1px solid #e1e8f0',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)'
+                    }}>
+                      <strong style={{ color: '#1e293b', fontWeight: '600', fontSize: '13px' }}>Final Combustion Analyser Reading</strong>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <input
+                          type="text"
+                          {...checklistForm.register('safetyChecks.finalCombustionAnalyserReading')}
+                          placeholder="Enter reading value"
+                          style={{
+                            padding: '8px 12px',
+                            border: '1px solid #e1e8f0',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            color: '#2c3e50'
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', color: '#2c3e50' }}>
+                          <input
+                            type="checkbox"
+                            {...checklistForm.register('safetyChecks.finalCombustionAnalyserNA')}
+                          />
+                          N/A
+                        </label>
+                      </div>
                     </div>
 
                   </div>
@@ -3037,35 +3101,63 @@ export default function DemoStyleForm() {
                   <h3>7. Summary and Notes</h3>
                   <div className="form-grid">
                     <div className="form-group">
-                      <label>Work Carried Out</label>
-                      <textarea
-                        {...checklistForm.register('summaryNotes.workCarriedOut')}
-                        rows={3}
-                        placeholder="Describe work carried out"
-                      />
+                      <label>Safe to Use *</label>
+                      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            {...checklistForm.register('summaryNotes.safeToUse')}
+                            value="YES"
+                          />
+                          Yes
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            {...checklistForm.register('summaryNotes.safeToUse')}
+                            value="NO"
+                          />
+                          No
+                        </label>
+                      </div>
                     </div>
+
                     <div className="form-group">
-                      <label>Defects Found</label>
-                      <textarea
-                        {...checklistForm.register('summaryNotes.defectsFound')}
-                        rows={3}
-                        placeholder="List any defects found"
-                      />
+                      <label>GIUSP Classification *</label>
+                      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            {...checklistForm.register('summaryNotes.giuspClassification')}
+                            value="NONE"
+                          />
+                          None
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            {...checklistForm.register('summaryNotes.giuspClassification')}
+                            value="AR"
+                          />
+                          AR
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="radio"
+                            {...checklistForm.register('summaryNotes.giuspClassification')}
+                            value="ID"
+                          />
+                          ID
+                        </label>
+                      </div>
                     </div>
+
                     <div className="form-group">
-                      <label>Recommended Actions</label>
-                      <textarea
-                        {...checklistForm.register('summaryNotes.recommendedActions')}
-                        rows={3}
-                        placeholder="Recommended actions"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Additional Notes</label>
-                      <textarea
-                        {...checklistForm.register('summaryNotes.additionalNotes')}
-                        rows={3}
-                        placeholder="Any additional notes"
+                      <label>Warning/Advisory Notice - Serial No:</label>
+                      <input
+                        type="text"
+                        {...checklistForm.register('summaryNotes.warningAdvisoryNoticeSerial')}
+                        placeholder="Enter serial number if applicable"
                       />
                     </div>
                   </div>

@@ -46,33 +46,34 @@ interface ChecklistData {
     inputRating?: string;
   };
   safetyChecks: {
-    gasConnectionIsolation: 'PASS' | 'FAIL' | 'NA';
+    gasConnectionIsolation: 'PASS' | 'FAIL';
     electricalConnectionIsolation: 'PASS' | 'FAIL' | 'NA';
     waterConnectionIsolation: 'PASS' | 'FAIL' | 'NA';
-    overallConditionStability: 'PASS' | 'FAIL' | 'NA';
+    overallConditionStability: 'PASS' | 'FAIL';
     controlsOperation: 'PASS' | 'FAIL' | 'NA';
     visualInspectionHeatExchanger: 'PASS' | 'FAIL' | 'NA';
-    burnerAndInjectors: 'PASS' | 'FAIL' | 'NA';
+    burnerAndInjectors: 'PASS' | 'FAIL';
     fans: 'PASS' | 'FAIL' | 'NA';
-    ignition: 'PASS' | 'FAIL' | 'NA';
+    ignition: 'PASS' | 'FAIL';
     flamePicture: 'PASS' | 'FAIL' | 'NA';
-    correctSafetyDevicesOperation: 'PASS' | 'FAIL' | 'NA';
-    heatInputOperatingPressure: 'PASS' | 'FAIL' | 'NA';
+    correctSafetyDevicesOperation: 'PASS' | 'FAIL';
+    heatInputKwBtu?: string;
+    operatingPressureMbar?: string;
     sealsIncludingApplianceCasing: 'PASS' | 'FAIL' | 'NA';
     condensateTrapDisposal: 'PASS' | 'FAIL' | 'NA';
     pressureTemperatureReliefValve: 'PASS' | 'FAIL' | 'NA';
     returnAirPlenum: 'PASS' | 'FAIL' | 'NA';
     fireplaceCatchmentSpaceClosurePlate: 'PASS' | 'FAIL' | 'NA';
     flueFlowSpillageTest: 'PASS' | 'FAIL' | 'NA';
-    satisfactoryChimneyFlue: 'PASS' | 'FAIL' | 'NA';
-    satisfactoryVentilation: 'PASS' | 'FAIL' | 'NA';
-    finalCombustionAnalyserReading: 'PASS' | 'FAIL' | 'NA';
+    satisfactoryChimneyFlue: 'YES' | 'NO';
+    satisfactoryVentilation: 'YES' | 'NO';
+    finalCombustionAnalyserReading?: string;
+    finalCombustionAnalyserNA?: boolean;
   };
   summaryNotes: {
-    workCarriedOut?: string;
-    defectsFound?: string;
-    recommendedActions?: string;
-    additionalNotes?: string;
+    safeToUse: 'YES' | 'NO';
+    giuspClassification: 'NONE' | 'AR' | 'ID';
+    warningAdvisoryNoticeSerial?: string;
   };
   dateSection: {
     checksCompletedDate: string;
@@ -369,6 +370,69 @@ function ChecklistContent() {
           color: #856404;
         }
 
+        .summary-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .summary-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 4px 0;
+          border-bottom: 1px solid #eee;
+          font-size: 7px;
+        }
+
+        .summary-item label {
+          font-weight: bold;
+          flex: 1;
+        }
+
+        .status-badge {
+          font-weight: bold;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-size: 6px;
+          text-align: center;
+          min-width: 30px;
+        }
+
+        .status-badge.yes {
+          background: #d4edda;
+          color: #155724;
+        }
+
+        .status-badge.no {
+          background: #f8d7da;
+          color: #721c24;
+        }
+
+        .classification-badge {
+          font-weight: bold;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-size: 6px;
+          text-align: center;
+          min-width: 30px;
+        }
+
+        .classification-badge.none {
+          background: #e2e3e5;
+          color: #383d41;
+        }
+
+        .classification-badge.ar {
+          background: #fff3cd;
+          color: #856404;
+        }
+
+        .classification-badge.id {
+          background: #f8d7da;
+          color: #721c24;
+        }
+
         @media screen {
           body {
             background: #f5f5f5;
@@ -604,16 +668,12 @@ function ChecklistContent() {
                   { key: 'ignition', label: 'Ignition' },
                   { key: 'flamePicture', label: 'Flame Picture' },
                   { key: 'correctSafetyDevicesOperation', label: 'Correct Safety Device(s) Operation' },
-                  { key: 'heatInputOperatingPressure', label: 'Heat Input/Operating Pressure' },
                   { key: 'sealsIncludingApplianceCasing', label: 'Seals including Appliance Casing' },
                   { key: 'condensateTrapDisposal', label: 'Condensate Trap/Disposal' },
                   { key: 'pressureTemperatureReliefValve', label: 'Pressure/Temperature Relief Valve' },
                   { key: 'returnAirPlenum', label: 'Return Air/Plenum' },
                   { key: 'fireplaceCatchmentSpaceClosurePlate', label: 'Fireplace Catchment Space and Closure Plate' },
-                  { key: 'flueFlowSpillageTest', label: 'Flue Flow & Spillage Test' },
-                  { key: 'satisfactoryChimneyFlue', label: 'Satisfactory Chimney/Flue' },
-                  { key: 'satisfactoryVentilation', label: 'Satisfactory Ventilation' },
-                  { key: 'finalCombustionAnalyserReading', label: 'Final Combustion Analyser Reading' }
+                  { key: 'flueFlowSpillageTest', label: 'Flue Flow & Spillage Test' }
                 ].map((item) => {
                   const status = checklistData.safetyChecks[item.key as keyof typeof checklistData.safetyChecks];
                   return (
@@ -625,6 +685,52 @@ function ChecklistContent() {
                     </tr>
                   );
                 })}
+
+                {/* Satisfactory Chimney/Flue - Yes/No Display */}
+                <tr>
+                  <td>Satisfactory Chimney/Flue</td>
+                  <td className={checklistData.safetyChecks.satisfactoryChimneyFlue === 'YES' ? 'status-pass' : ''}>
+                    {checklistData.safetyChecks.satisfactoryChimneyFlue === 'YES' ? '✓' : ''}
+                  </td>
+                  <td className={checklistData.safetyChecks.satisfactoryChimneyFlue === 'NO' ? 'status-fail' : ''}>
+                    {checklistData.safetyChecks.satisfactoryChimneyFlue === 'NO' ? '✓' : ''}
+                  </td>
+                  <td></td>
+                </tr>
+
+                {/* Satisfactory Ventilation - Yes/No Display */}
+                <tr>
+                  <td>Satisfactory Ventilation</td>
+                  <td className={checklistData.safetyChecks.satisfactoryVentilation === 'YES' ? 'status-pass' : ''}>
+                    {checklistData.safetyChecks.satisfactoryVentilation === 'YES' ? '✓' : ''}
+                  </td>
+                  <td className={checklistData.safetyChecks.satisfactoryVentilation === 'NO' ? 'status-fail' : ''}>
+                    {checklistData.safetyChecks.satisfactoryVentilation === 'NO' ? '✓' : ''}
+                  </td>
+                  <td></td>
+                </tr>
+
+                {/* Heat Input/Operating Pressure - Custom Display */}
+                <tr>
+                  <td>Heat Input/Operating Pressure</td>
+                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '6px' }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <span><strong>KW/BTU:</strong> {checklistData.safetyChecks.heatInputKwBtu || 'N/A'}</span>
+                      <span><strong>mbar:</strong> {checklistData.safetyChecks.operatingPressureMbar || 'N/A'}</span>
+                    </div>
+                  </td>
+                </tr>
+
+                {/* Final Combustion Analyser Reading - Custom Display */}
+                <tr>
+                  <td>Final Combustion Analyser Reading</td>
+                  <td colSpan={3} style={{ textAlign: 'left', fontSize: '6px' }}>
+                    {checklistData.safetyChecks.finalCombustionAnalyserNA ?
+                      <span className="status-na">N/A</span> :
+                      <span>{checklistData.safetyChecks.finalCombustionAnalyserReading || 'N/A'}</span>
+                    }
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -634,21 +740,23 @@ function ChecklistContent() {
         <div className="section">
           <h3>7. SUMMARY AND NOTES</h3>
           <div className="section-content">
-            <div className="notes-section">
-              <h4>Work Carried Out:</h4>
-              <p>{checklistData.summaryNotes.workCarriedOut || 'N/A'}</p>
-            </div>
-            <div className="notes-section">
-              <h4>Defects Found:</h4>
-              <p>{checklistData.summaryNotes.defectsFound || 'N/A'}</p>
-            </div>
-            <div className="notes-section">
-              <h4>Recommended Actions:</h4>
-              <p>{checklistData.summaryNotes.recommendedActions || 'N/A'}</p>
-            </div>
-            <div className="notes-section">
-              <h4>Additional Notes:</h4>
-              <p>{checklistData.summaryNotes.additionalNotes || 'N/A'}</p>
+            <div className="summary-grid">
+              <div className="summary-item">
+                <label>Safe to Use:</label>
+                <span className={`status-badge ${checklistData.summaryNotes.safeToUse?.toLowerCase()}`}>
+                  {checklistData.summaryNotes.safeToUse || 'N/A'}
+                </span>
+              </div>
+              <div className="summary-item">
+                <label>GIUSP Classification:</label>
+                <span className={`classification-badge ${checklistData.summaryNotes.giuspClassification?.toLowerCase()}`}>
+                  {checklistData.summaryNotes.giuspClassification || 'N/A'}
+                </span>
+              </div>
+              <div className="summary-item">
+                <label>Warning/Advisory Notice - Serial No:</label>
+                <span>{checklistData.summaryNotes.warningAdvisoryNoticeSerial || 'N/A'}</span>
+              </div>
             </div>
           </div>
         </div>
